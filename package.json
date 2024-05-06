@@ -10,12 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdi/js": "^7.4.47",
+    "@mdi/react": "^1.6.1",
     "@tanstack/react-query": "^5.35.1",
     "bootstrap": "^5.3.3",
     "node-sass": "^9.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
+    "react-geocode": "^1.0.0-alpha.1",
     "react-router-dom": "^6.23.0"
   },
   "devDependencies": {

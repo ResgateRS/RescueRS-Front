@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Button, Form } from "react-bootstrap";
+import { Alert, Button, Card, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Layout from "../../components/Layout";
@@ -15,7 +15,7 @@ export default function Login(){
 
 	async function handleLogin(rescuer: boolean){
 		setError("");
-		const resp = await fetch(`${import.meta.env.API_URL}/Login`,{ body: JSON.stringify({"celphone": celular, "rescuer": rescuer}) });
+		const resp = await fetch(`${import.meta.env.VITE_API_URL}/Login`,{ headers: {"Content-Type": "application/json"}, method: "POST", body: JSON.stringify({"cellphone": celular, "rescuer": rescuer}) });
 		const body = await resp.json();
 		return {status: resp.ok, body: body};
 	}
@@ -46,20 +46,24 @@ export default function Login(){
 		<Layout>
 			<Header/>
 			
-			<Form>
-				<Form.Group className="mb-3 text-center">
-					<Form.Label>Celular</Form.Label>
-					<Form.Control type="text" placeholder="Informe aqui o celular" size="lg" className="text-center" value={celular} onChange={(e)=>{ setCelular(e.currentTarget.value) }} />
-				</Form.Group>
+			<Card className="w-100 shadow-sm">
+				<Card.Body>
+					<Form>
+						<Form.Group className="mb-4">
+							<Form.Label>Celular</Form.Label>
+							<Form.Control type="number" placeholder="Informe aqui o celular" size="lg" className="" value={celular} onChange={(e)=>{ setCelular(e.currentTarget.value) }} />
+						</Form.Group>
 
-				{error!="" && (
-					<Alert variant="danger">{error}</Alert>
-				)}
+						{error!="" && (
+							<Alert variant="danger">{error}</Alert>
+						)}
 
-				<Button className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleSolicitarResgate}>Solicitar Resgate</Button>
+						<Button className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleSolicitarResgate}>Solicitar Resgate</Button>
 
-				<Button variant="dark" className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleEstouResgatando}>Estou Resgatando</Button>
-			</Form>
+						<Button variant="dark" className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleEstouResgatando}>Estou Resgatando</Button>
+					</Form>
+				</Card.Body>
+			</Card>
 		</Layout>
 	)
 }

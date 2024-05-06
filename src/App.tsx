@@ -6,16 +6,16 @@ const SolicitarResgate = lazy(()=> import("./screens/SolicitarResgate"));
 const MinhasSolicitacoes = lazy(()=> import("./screens/MinhasSolicitacoes"));
 const Resgates = lazy(()=> import("./screens/Resgates"));
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import AuthProvider from './context/AuthContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
     
     const element = useRoutes([
         {path: "/", element: <Login />},
-        {path: "/solicitarResgate", element: <SolicitarResgate />},
         {path: "/minhasSolicitacoes", element: <MinhasSolicitacoes />},
         {path: "/resgates", element: <Resgates />},
+        {path: "/solicitarResgate", element: <SolicitarResgate />},
     ]);
 
     const location = useLocation();
