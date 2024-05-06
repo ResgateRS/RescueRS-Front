@@ -4,18 +4,40 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Layout from "../../components/Layout";
 import { useAuth } from "../../context/AuthContext";
+import parsePhoneNumber from "libphonenumber-js";
+import { PhoneNumberFormControl } from "../../components/PhoneNumberFormControl";
 
 export default function Login(){
-
 	const navigate = useNavigate();
 	const {setToken, setRescuer} = useAuth();
+	const [phoneNumber, setPhoneNumber] = useState<string>();
+	const [phoneNumberError, setPhoneNumberError] = useState<string>();
+	const [apiError, setApiError] = useState<string>();
 
-	const [celular, setCelular] = useState("");
-	const [error, setError] = useState("");
+	const error = phoneNumberError ?? apiError
+
+	function handlePhoneNumberChange(value?: string) {
+		if (!value?.length) {
+			return setPhoneNumberError('Número de celular obrigatório')
+		}
+		const parsedPhoneNumber = parsePhoneNumber(value, 'BR');
+		if (!parsedPhoneNumber?.isValid()) {
+			return setPhoneNumberError('Número de celular inválido');
+		}
+		setPhoneNumberError(undefined);
+		setPhoneNumber(value);
+	}
 
 	async function handleLogin(rescuer: boolean){
-		setError("");
-		const resp = await fetch(`${import.meta.env.VITE_API_URL}/Login`,{ headers: {"Content-Type": "application/json"}, method: "POST", body: JSON.stringify({"cellphone": celular, "rescuer": rescuer}) });
+		setApiError(undefined);
+		const parsedPhoneNumber = parsePhoneNumber(phoneNumber!, 'BR');
+		const cellphone = parsedPhoneNumber!.nationalNumber;
+		const input = { cellphone, rescuer };
+		const resp = await fetch(`${import.meta.env.VITE_API_URL}/Login`, {
+			headers: { "Content-Type": "application/json" },
+			method: "POST",
+			body: JSON.stringify(input)
+		});
 		const body = await resp.json() as APIResponse;
 		return {status: resp.ok, body: body};
 	}
@@ -27,7 +49,7 @@ export default function Login(){
 			setRescuer(resp.body.Data.rescuer)
 			navigate("minhasSolicitacoes");
 		}else{
-			setError(resp.body.Message ?? "Ocorreu algum problema, tente novamente");
+			setApiError(resp.body.Message ?? "Ocorreu algum problema, tente novamente");
 		}
 	}
 
@@ -38,7 +60,7 @@ export default function Login(){
 			setRescuer(resp.body.Data.rescuer)
 			navigate("resgates");
 		}else{
-			setError("Ocorreu algum problema, tente novamente");
+			setApiError("Ocorreu algum problema, tente novamente");
 		}
 	}
 
@@ -51,10 +73,10 @@ export default function Login(){
 					<Form>
 						<Form.Group className="mb-4">
 							<Form.Label>Celular</Form.Label>
-							<Form.Control type="number" placeholder="Informe aqui o celular" size="lg" className="" value={celular} onChange={(e)=>{ setCelular(e.currentTarget.value) }} />
+							<PhoneNumberFormControl value={phoneNumber} onChange={handlePhoneNumberChange} />
 						</Form.Group>
 
-						{error!="" && (
+						{!!error && (
 							<Alert variant="danger">{error}</Alert>
 						)}
 
