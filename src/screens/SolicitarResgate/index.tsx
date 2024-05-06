@@ -34,7 +34,7 @@ export default function SolicitarResgate(){
 		}
 
 		const resp = await fetch(`${import.meta.env.API_URL}/Rescue/Request`, {method: 'post', body: JSON.stringify(data)});
-		const body = await resp.json();
+		const body = await resp.json() as APIResponse;
 		if(resp.status){
 			navigate("/minhasSolicitacoes");
 		}else{
@@ -43,7 +43,7 @@ export default function SolicitarResgate(){
 	}
 
 	async function handleLatLong(){
-		let resp = await geocode(RequestType.ADDRESS, address, {key: "", outputFormat: OutputFormat.JSON});
+		let resp = await geocode(RequestType.ADDRESS, address, {key: import.meta.env.VITE_MAPS_API, outputFormat: OutputFormat.JSON});
 		return location = resp.results[0].geometry.location;
 	}
 

@@ -16,20 +16,23 @@ type ListMyRescuesType = {
     "rescued": boolean;
 }
 
+type APIResponseListMyRescues = Omit<APIResponse,'Data'> & {Data: ListMyRescuesType[]};
+
 export default function MinhasSolicitacoes(){
 
 	const navigate = useNavigate();
 	const {latitude, longitude} = useAuth();
 
-	const query = useInfiniteQuery<any>({
+	const query = useInfiniteQuery<APIResponseListMyRescues>({
 		queryKey: ['ListMyRescues'],
 		queryFn: ({ pageParam = 0 }) => fetchData(pageParam),
 		initialPageParam: 1,
-		getNextPageParam: (lastPage) => lastPage.rescueId,
+		getNextPageParam: (lastPage) => lastPage.Data[lastPage.Data.length-1].rescueId,
 	})
 
-	function fetchData(page: any){
-		return fetch(`${import.meta.env.API_URL}/Rescue/ListMyRescues?page=${page}&size=${import.meta.env.PAGE_SIZE}&latitude=${latitude}&longitude=${longitude}`)
+	async function fetchData(page: any){
+		let resp = await fetch(`${import.meta.env.API_URL}/Rescue/ListMyRescues?page=${page}&size=${import.meta.env.PAGE_SIZE}&latitude=${latitude}&longitude=${longitude}`);
+		return await resp.json() as APIResponseListMyRescues;
 	}
 
 	function handleSolicitarResgate(){
@@ -48,10 +51,10 @@ export default function MinhasSolicitacoes(){
 				{query.data?.pages.map((page, key)=>{
 					return (
 						<React.Fragment key={key}>
-							{page.data?.map((item: any, itemKey: any)=>{
+							{page.Data.map((item, itemKey)=>{
 								return (
 									<ListGroup.Item key={itemKey} action className="w-100">
-										Link 1
+										{item.rescueId}
 									</ListGroup.Item>
 								)
 							})}

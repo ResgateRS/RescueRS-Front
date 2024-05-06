@@ -16,26 +16,26 @@ export default function Login(){
 	async function handleLogin(rescuer: boolean){
 		setError("");
 		const resp = await fetch(`${import.meta.env.VITE_API_URL}/Login`,{ headers: {"Content-Type": "application/json"}, method: "POST", body: JSON.stringify({"cellphone": celular, "rescuer": rescuer}) });
-		const body = await resp.json();
+		const body = await resp.json() as APIResponse;
 		return {status: resp.ok, body: body};
 	}
 
 	async function handleSolicitarResgate(){
 		let resp = await handleLogin(false);
-		if(resp.status){
-			setToken(resp.body.token)
-			setRescuer(resp.body.rescuer)
+		if(resp.status && resp.body.Result===1){
+			setToken(resp.body.Data.token)
+			setRescuer(resp.body.Data.rescuer)
 			navigate("minhasSolicitacoes");
 		}else{
-			setError("Ocorreu algum problema, tente novamente");
+			setError(resp.body.Message ?? "Ocorreu algum problema, tente novamente");
 		}
 	}
 
 	async function handleEstouResgatando(){
 		let resp = await handleLogin(false);
 		if(resp.status){
-			setToken(resp.body.token)
-			setRescuer(resp.body.rescuer)
+			setToken(resp.body.Data.token)
+			setRescuer(resp.body.Data.rescuer)
 			navigate("resgates");
 		}else{
 			setError("Ocorreu algum problema, tente novamente");
