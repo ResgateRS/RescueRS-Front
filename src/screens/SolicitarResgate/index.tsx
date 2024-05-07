@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Button, Form, Alert, InputGroup, Card } from "react-bootstrap";
 import Icon from '@mdi/react';
-import { mdiMinus, mdiPlus } from '@mdi/js';
+import { mdiChevronLeft, mdiMinus, mdiPlus } from '@mdi/js';
 
 import Layout from "../../components/Layout";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { OutputFormat, RequestType, geocode } from "react-geocode";
+import Header from "../../components/Header";
 
 export default function SolicitarResgate(){
 
@@ -53,11 +54,14 @@ export default function SolicitarResgate(){
 
 	return (
 		<Layout>
-			<div className="d-flex my-4">
-				<h1>Solicitar Resgate</h1>
-			</div>
+			<Header/>
 
-			<Card className="w-100 shadow-sm">
+			<Link className="h4 text-decoration-none mb-4 d-flex align-items-center" to={"/minhasSolicitacoes"}>
+				<Icon path={mdiChevronLeft} size={1} className="me-2" />
+				Solicitar Resgate
+			</Link>
+
+			<Card className="w-100 shadow-sm mb-4">
 				<Card.Body>
 					<Form className="w-100">
 						<Form.Group  className="mb-3 ">
@@ -115,8 +119,6 @@ export default function SolicitarResgate(){
 						)}
 
 						<Button className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleSolicitarResgate}>Solicitar</Button>
-						
-						<Button variant="light" className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleVolta}>Voltar</Button>
 					</Form>
 				</Card.Body>
 			</Card>
