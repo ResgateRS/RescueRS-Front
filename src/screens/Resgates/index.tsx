@@ -6,7 +6,6 @@ import { useAuth } from "../../context/AuthContext";
 import React, { useState } from "react";
 import RestageItem from "../../components/RestageItem";
 import { APIResponseListPendingRescues } from "../../config/define";
-import Header from "../../components/Header";
 import InfiniteScroll from "../../components/InfiniteScroll";
 import { useApi } from "../../hooks/api";
 

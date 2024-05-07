@@ -4,7 +4,6 @@ import Layout from "../../components/Layout";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import Header from "../../components/Header";
 import RestageItem from "../../components/RestageItem";
 import { APIResponseListMyRescues } from "../../config/define";
 import { useApi } from "../../hooks/api";

@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Button, Form, Alert, InputGroup, Card } from "react-bootstrap";
+import { Button, Form, Alert, InputGroup } from "react-bootstrap";
 import Icon from "@mdi/react";
 import { mdiChevronLeft, mdiMinus, mdiPlus } from "@mdi/js";
 
 import Layout from "../../components/Layout";
 import { Link, useNavigate } from "react-router-dom";
 import { OutputFormat, RequestType, geocode } from "react-geocode";
-import Header from "../../components/Header";
 import { APIRequestRequest, APIResponse } from "../../config/define";
 import { useAuth } from "../../context/AuthContext";
 import { useApi } from "../../hooks/api";
