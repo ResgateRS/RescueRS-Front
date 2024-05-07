@@ -58,3 +58,11 @@ export type APIRequestRequest = {
 export type APIConfirmRequest = {
   rescueId: string;
 };
+
+export function formatarDistancia(distancia: number) {
+  if (distancia >= 1000) {
+    return (distancia / 1000).toFixed(2) + " km";
+  } else {
+    return distancia + " m";
+  }
+}

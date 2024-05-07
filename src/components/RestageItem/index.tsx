@@ -7,13 +7,17 @@ import {
   mdiMapMarker,
   mdiMapMarkerOutline,
 } from "@mdi/js";
-import { Button, Col, Row, Spinner } from "react-bootstrap";
+import { Badge, Button, Col, Row, Spinner } from "react-bootstrap";
 import moment from "moment";
 import "moment/dist/locale/pt-br";
 import { QueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
 import { useApi } from "../../hooks/api";
-import { APIConfirmRequest, APIResponse } from "../../config/define";
+import {
+  APIConfirmRequest,
+  APIResponse,
+  formatarDistancia,
+} from "../../config/define";
 import { useState } from "react";
 
 type RestageItemProps = {
@@ -29,6 +33,7 @@ type RestageItemProps = {
   longitude?: number;
   distance?: number;
   confirm?: boolean;
+  rescued?: boolean;
 };
 
 const queryClient = new QueryClient();
@@ -55,11 +60,12 @@ export default function RestageItem(props: RestageItemProps) {
         },
       },
     );
-    if (resp.Result !== 1) {
+
+    if (resp.Result === 1) {
       queryClient.invalidateQueries({ queryKey: ["ListPengingRescues"] });
       queryClient.invalidateQueries({ queryKey: ["ListCompletedRescues"] });
     } else {
-      alert("Ocorreu algum problema, tente novamente");
+      alert(resp.Message ?? "Ocorreu algum problema, tente novamente");
     }
     setLoading(false);
   }
@@ -74,12 +80,14 @@ export default function RestageItem(props: RestageItemProps) {
               {moment(props.requestDateTime).locale("pt-br").fromNow()}
             </div>
           </Col>
-          <Col>
-            <div className="d-flex align-items-center text-muted justify-content-end">
-              <Icon path={mdiMapMarkerOutline} size={0.7} className="me-1" />
-              {props.distance} metros
-            </div>
-          </Col>
+          {props.distance && (
+            <Col>
+              <div className="d-flex align-items-center text-muted justify-content-end">
+                <Icon path={mdiMapMarkerOutline} size={0.7} className="me-1" />
+                {formatarDistancia(props.distance)}
+              </div>
+            </Col>
+          )}
         </Row>
         <Row>
           <Col className="d-flex flex-column justify-content-center align-items-center">
@@ -119,7 +127,7 @@ export default function RestageItem(props: RestageItemProps) {
               variant="primary"
               target="_blank"
               size="lg"
-              className="d-flex align-items-center justify-content-center flex-fill"
+              className="d-flex align-items-center justify-content-center flex-fill fw-medium"
               href={`https://www.google.com/maps/place/${props.latitude},${props.longitude}`}
               disabled={loading}
             >
@@ -132,7 +140,7 @@ export default function RestageItem(props: RestageItemProps) {
               variant="primary"
               target="_blank"
               size="lg"
-              className="d-flex align-items-center justify-content-center flex-fill"
+              className="d-flex align-items-center justify-content-center flex-fill fw-medium"
               href={`tel:${props.cellphone}`}
               disabled={loading}
             >
@@ -145,7 +153,7 @@ export default function RestageItem(props: RestageItemProps) {
             as="button"
             variant="dark"
             size="lg"
-            className="d-flex align-items-center justify-content-center flex-fill"
+            className="d-flex align-items-center justify-content-center flex-fill fw-medium"
             onClick={handleConfirm}
             disabled={loading}
           >
@@ -156,6 +164,16 @@ export default function RestageItem(props: RestageItemProps) {
             )}
             Confirmar
           </Button>
+        )}
+        {props.rescued === false && (
+          <Badge bg={"warning"} className="fs-6">
+            Pendente
+          </Badge>
+        )}
+        {props.rescued === true && (
+          <Badge bg={"success"} className="fs-6">
+            Realizado
+          </Badge>
         )}
       </div>
     </ListGroup.Item>

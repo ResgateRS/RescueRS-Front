@@ -64,7 +64,7 @@ export default function Login() {
   }
 
   async function handleEstouResgatando() {
-    const resp = await handleLogin(false);
+    const resp = await handleLogin(true);
     if (resp.status) {
       setAuth(resp.body.Data?.token, true);
       navigate("resgates");
