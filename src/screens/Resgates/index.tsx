@@ -17,11 +17,15 @@ export default function Resgates() {
   const { get } = useApi();
 
   async function fetchDataPending(page?: number) {
+    let url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues`;
+    if(proximity){
+      url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescuesByProximity`;
+    }
     return await get<APIResponseListPengingRescues>(
-      `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues`,
+      url,
       {
         search:
-          typeof latitude === "number" && typeof longitude === "number"
+          proximity && typeof latitude === "number" && typeof longitude === "number"
             ? new URLSearchParams({
                 latitude: latitude.toString(),
                 longitude: longitude.toString(),
@@ -67,7 +71,7 @@ export default function Resgates() {
   }
 
   const queryPending = useInfiniteQuery<APIResponseListPengingRescues>({
-    queryKey: ["ListPengingRescues", token],
+    queryKey: ["ListPengingRescues", token, proximity],
     queryFn: ({ pageParam }) => fetchDataPending(pageParam as number),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) =>
