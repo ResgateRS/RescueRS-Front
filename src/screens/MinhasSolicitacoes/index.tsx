@@ -69,10 +69,13 @@ export default function MinhasSolicitacoes() {
                 return (
                   <RestageItem
                     key={itemKey}
+                    rescueId={item.rescueId}
+                    requestDateTime={item.requestDateTime}
                     animalsNumber={item.animalsNumber}
                     childrenNumber={item.childrenNumber}
                     elderlyNumber={item.elderlyNumber}
                     totalPeopleNumber={item.totalPeopleNumber}
+                    disabledNumber={item.disabledNumber}
                   />
                 );
               })}

@@ -122,24 +122,24 @@ export default function Resgates() {
                     return (
                       <RestageItem
                         key={itemKey}
+                        rescueId={item.rescueId}
+                        requestDateTime={item.requestDateTime}
                         animalsNumber={item.animalsNumber}
                         childrenNumber={item.childrenNumber}
                         elderlyNumber={item.elderlyNumber}
                         totalPeopleNumber={item.totalPeopleNumber}
+                        disabledNumber={item.disabledNumber}
+                        cellphone={item.cellphone}
+                        latitude={item.latitude}
+                        longitude={item.longitude}
+                        distance={item.distance}
+                        confirm={true}
                       />
                     );
                   })}
                 </React.Fragment>
               );
             })}
-            <RestageItem
-              animalsNumber={2}
-              childrenNumber={1}
-              elderlyNumber={0}
-              totalPeopleNumber={4}
-              latitude={10}
-              longitude={20}
-            />
           </ListGroup>
 
           <InfiniteScroll
@@ -164,12 +164,17 @@ export default function Resgates() {
                     return (
                       <RestageItem
                         key={itemKey}
+                        rescueId={item.rescueId}
+                        requestDateTime={item.requestDateTime}
                         animalsNumber={item.animalsNumber}
                         childrenNumber={item.childrenNumber}
                         elderlyNumber={item.elderlyNumber}
                         totalPeopleNumber={item.totalPeopleNumber}
+                        disabledNumber={item.disabledNumber}
+                        cellphone={item.cellphone}
                         latitude={item.latitude}
                         longitude={item.longitude}
+                        distance={item.distance}
                       />
                     );
                   })}

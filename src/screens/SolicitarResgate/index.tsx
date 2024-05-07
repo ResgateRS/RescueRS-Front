@@ -178,11 +178,11 @@ export default function SolicitarResgate() {
         </Form.Group>
 
         <Form.Group className="mb-3 ">
-          <Form.Label>Número de pessoas desabilitadas</Form.Label>
+          <Form.Label>Número de pessoas com deficiência</Form.Label>
           <InputGroup>
             <Form.Control
               type="number"
-              placeholder="Informe aqui o número de pessoas desabilitadas"
+              placeholder="Informe aqui o número de pessoas com deficiência"
               size="lg"
               className=""
               value={disabledNumber}

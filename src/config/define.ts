@@ -54,3 +54,7 @@ export type APIRequestRequest = {
   latitude: number;
   longitude: number;
 };
+
+export type APIConfirmRequest = {
+  rescueId: string;
+};
