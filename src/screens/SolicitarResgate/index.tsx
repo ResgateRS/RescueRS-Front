@@ -42,12 +42,16 @@ export default function SolicitarResgate() {
       longitude: utilizarLocalizacao ? longitude : location.lng,
     };
 
-    const resp = await post<APIRequestRequest, APIResponse>(`${import.meta.env.VITE_API_URL}/Rescue/Request`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const resp = await post<APIRequestRequest, APIResponse>(
+      `${import.meta.env.VITE_API_URL}/Rescue/Request`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
     if (resp.Result === 1) {
       handleVoltar();
     } else {
@@ -56,7 +60,10 @@ export default function SolicitarResgate() {
   }
 
   async function handleLatLong() {
-    let resp = await geocode(RequestType.ADDRESS, address, { key: import.meta.env.VITE_MAPS_API, outputFormat: OutputFormat.JSON });
+    let resp = await geocode(RequestType.ADDRESS, address, {
+      key: import.meta.env.VITE_MAPS_API,
+      outputFormat: OutputFormat.JSON,
+    });
     return (location = resp.results[0].geometry.location);
   }
 
@@ -66,209 +73,210 @@ export default function SolicitarResgate() {
 
   return (
     <Layout>
-      <Header />
-
-      <Link className="h4 text-decoration-none mb-4 d-flex align-items-center" to={"/minhasSolicitacoes"}>
+      <Link
+        className="h5 text-decoration-none mb-4 d-flex align-items-center"
+        to={"/minhasSolicitacoes"}
+      >
         <Icon path={mdiChevronLeft} size={1} className="me-2" />
         Solicitar Resgate
       </Link>
 
-      <Card className="w-100 shadow-sm mb-4">
-        <Card.Body>
-          <Form className="w-100">
-            <Form.Group className="mb-3 ">
-              <Form.Label>Número de pessoas</Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type="number"
-                  placeholder="Informe aqui o número de pessoas"
-                  size="lg"
-                  className=""
-                  value={totalPeopleNumber}
-                  onChange={(e) => {
-                    setTotalPeopleNumber(Number(e.currentTarget.value));
-                  }}
-                />
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    setTotalPeopleNumber((p) => p - 1);
-                  }}
-                >
-                  <Icon path={mdiMinus} size={1} />
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    setTotalPeopleNumber((p) => p + 1);
-                  }}
-                >
-                  <Icon path={mdiPlus} size={1} />
-                </Button>
-              </InputGroup>
-            </Form.Group>
-
-            <Form.Group className="mb-3 ">
-              <Form.Label>Número de crianças</Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type="number"
-                  placeholder="Informe aqui o número de crianças"
-                  size="lg"
-                  className=""
-                  value={childrenNumber}
-                  onChange={(e) => {
-                    setChildrenNumber(Number(e.currentTarget.value));
-                  }}
-                />
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    setChildrenNumber((p) => p - 1);
-                  }}
-                >
-                  <Icon path={mdiMinus} size={1} />
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    setChildrenNumber((p) => p + 1);
-                  }}
-                >
-                  <Icon path={mdiPlus} size={1} />
-                </Button>
-              </InputGroup>
-            </Form.Group>
-
-            <Form.Group className="mb-3 ">
-              <Form.Label>Número de idosos</Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type="number"
-                  placeholder="Informe aqui o número de idosos"
-                  size="lg"
-                  className=""
-                  value={elderlyNumber}
-                  onChange={(e) => {
-                    setElderlyNumber(Number(e.currentTarget.value));
-                  }}
-                />
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    setElderlyNumber((p) => p - 1);
-                  }}
-                >
-                  <Icon path={mdiMinus} size={1} />
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    setElderlyNumber((p) => p + 1);
-                  }}
-                >
-                  <Icon path={mdiPlus} size={1} />
-                </Button>
-              </InputGroup>
-            </Form.Group>
-
-            <Form.Group className="mb-3 ">
-              <Form.Label>Número de pessoas desabilitadas</Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type="number"
-                  placeholder="Informe aqui o número de pessoas desabilitadas"
-                  size="lg"
-                  className=""
-                  value={disabledNumber}
-                  onChange={(e) => {
-                    setDisabledNumber(Number(e.currentTarget.value));
-                  }}
-                />
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    setDisabledNumber((p) => p - 1);
-                  }}
-                >
-                  <Icon path={mdiMinus} size={1} />
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    setDisabledNumber((p) => p + 1);
-                  }}
-                >
-                  <Icon path={mdiPlus} size={1} />
-                </Button>
-              </InputGroup>
-            </Form.Group>
-
-            <Form.Group className="mb-3 ">
-              <Form.Label>Número de Animais</Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type="number"
-                  placeholder="Informe aqui o número de Animais"
-                  size="lg"
-                  className=""
-                  value={animalsNumber}
-                  onChange={(e) => {
-                    setAnimalsNumber(Number(e.currentTarget.value));
-                  }}
-                />
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    setAnimalsNumber((p) => p - 1);
-                  }}
-                >
-                  <Icon path={mdiMinus} size={1} />
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    setAnimalsNumber((p) => p + 1);
-                  }}
-                >
-                  <Icon path={mdiPlus} size={1} />
-                </Button>
-              </InputGroup>
-            </Form.Group>
-
-            <Form.Group className="mb-3 ">
-              <Form.Label>Endereço Completo</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Informe aqui o Endereço"
-                size="lg"
-                className=""
-                value={address}
-                onChange={(e) => {
-                  setAddress(e.currentTarget.value);
-                }}
-                disabled={utilizarLocalizacao}
-              />
-            </Form.Group>
-
-            <Form.Check
-              type="switch"
-              label="Utilizar minha localização atual"
-              id="utilizar"
-              className="mb-3"
+      <Form className="w-100">
+        <Form.Group className="mb-3 ">
+          <Form.Label>Número de pessoas</Form.Label>
+          <InputGroup>
+            <Form.Control
+              type="number"
+              placeholder="Informe aqui o número de pessoas"
+              size="lg"
+              className=""
+              value={totalPeopleNumber}
               onChange={(e) => {
-                setUtilizarLocalizacao(e.currentTarget.checked);
+                setTotalPeopleNumber(Number(e.currentTarget.value));
               }}
             />
-
-            {error != "" && <Alert variant="danger">{error}</Alert>}
-
-            <Button className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleSolicitarResgate}>
-              Solicitar
+            <Button
+              variant="danger"
+              onClick={() => {
+                setTotalPeopleNumber((p) => (p == 0 ? 0 : p - 1));
+              }}
+            >
+              <Icon path={mdiMinus} size={1} />
             </Button>
-          </Form>
-        </Card.Body>
-      </Card>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setTotalPeopleNumber((p) => p + 1);
+              }}
+            >
+              <Icon path={mdiPlus} size={1} />
+            </Button>
+          </InputGroup>
+        </Form.Group>
+
+        <Form.Group className="mb-3 ">
+          <Form.Label>Número de crianças</Form.Label>
+          <InputGroup>
+            <Form.Control
+              type="number"
+              placeholder="Informe aqui o número de crianças"
+              size="lg"
+              className=""
+              value={childrenNumber}
+              onChange={(e) => {
+                setChildrenNumber(Number(e.currentTarget.value));
+              }}
+            />
+            <Button
+              variant="danger"
+              onClick={() => {
+                setChildrenNumber((p) => (p == 0 ? 0 : p - 1));
+              }}
+            >
+              <Icon path={mdiMinus} size={1} />
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setChildrenNumber((p) => p + 1);
+              }}
+            >
+              <Icon path={mdiPlus} size={1} />
+            </Button>
+          </InputGroup>
+        </Form.Group>
+
+        <Form.Group className="mb-3 ">
+          <Form.Label>Número de idosos</Form.Label>
+          <InputGroup>
+            <Form.Control
+              type="number"
+              placeholder="Informe aqui o número de idosos"
+              size="lg"
+              className=""
+              value={elderlyNumber}
+              onChange={(e) => {
+                setElderlyNumber(Number(e.currentTarget.value));
+              }}
+            />
+            <Button
+              variant="danger"
+              onClick={() => {
+                setElderlyNumber((p) => (p == 0 ? 0 : p - 1));
+              }}
+            >
+              <Icon path={mdiMinus} size={1} />
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setElderlyNumber((p) => p + 1);
+              }}
+            >
+              <Icon path={mdiPlus} size={1} />
+            </Button>
+          </InputGroup>
+        </Form.Group>
+
+        <Form.Group className="mb-3 ">
+          <Form.Label>Número de pessoas desabilitadas</Form.Label>
+          <InputGroup>
+            <Form.Control
+              type="number"
+              placeholder="Informe aqui o número de pessoas desabilitadas"
+              size="lg"
+              className=""
+              value={disabledNumber}
+              onChange={(e) => {
+                setDisabledNumber(Number(e.currentTarget.value));
+              }}
+            />
+            <Button
+              variant="danger"
+              onClick={() => {
+                setDisabledNumber((p) => (p == 0 ? 0 : p - 1));
+              }}
+            >
+              <Icon path={mdiMinus} size={1} />
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setDisabledNumber((p) => p + 1);
+              }}
+            >
+              <Icon path={mdiPlus} size={1} />
+            </Button>
+          </InputGroup>
+        </Form.Group>
+
+        <Form.Group className="mb-3 ">
+          <Form.Label>Número de Animais</Form.Label>
+          <InputGroup>
+            <Form.Control
+              type="number"
+              placeholder="Informe aqui o número de Animais"
+              size="lg"
+              className=""
+              value={animalsNumber}
+              onChange={(e) => {
+                setAnimalsNumber(Number(e.currentTarget.value));
+              }}
+            />
+            <Button
+              variant="danger"
+              onClick={() => {
+                setAnimalsNumber((p) => (p == 0 ? 0 : p - 1));
+              }}
+            >
+              <Icon path={mdiMinus} size={1} />
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setAnimalsNumber((p) => p + 1);
+              }}
+            >
+              <Icon path={mdiPlus} size={1} />
+            </Button>
+          </InputGroup>
+        </Form.Group>
+
+        <Form.Group className="mb-3 ">
+          <Form.Label>Endereço Completo</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Informe aqui o Endereço Completo"
+            size="lg"
+            className=""
+            value={address}
+            onChange={(e) => {
+              setAddress(e.currentTarget.value);
+            }}
+            disabled={utilizarLocalizacao}
+          />
+        </Form.Group>
+
+        <Form.Check
+          type="switch"
+          label="Utilizar minha localização atual"
+          id="utilizar"
+          className="mb-3 form-switch-md"
+          onChange={(e) => {
+            setUtilizarLocalizacao(e.currentTarget.checked);
+          }}
+        />
+
+        {error != "" && <Alert variant="danger">{error}</Alert>}
+
+        <Button
+          className="mb-4 w-100 text-uppercase py-3 fw-medium"
+          size="lg"
+          onClick={handleSolicitarResgate}
+        >
+          Solicitar
+        </Button>
+      </Form>
     </Layout>
   );
 }

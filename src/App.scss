@@ -1,3 +1,33 @@
-body{
-	background-color: rgb(248,249,250);
+body {
+  background-color: rgb(248, 249, 250);
+}
+
+.form-switch.form-switch-md {
+  padding-left: 4.5em;
+  height: 2.5em;
+}
+
+.form-switch.form-switch-md .form-check-input {
+  margin-left: -4.5em;
+  height: 2em;
+  width: 4em;
+}
+
+.form-switch.form-switch-md .form-check-label {
+  padding-top: 0.5em;
+}
+
+.form-switch.form-switch-lg {
+  padding-left: 8.5em;
+  height: 4.5em;
+}
+
+.form-switch.form-switch-lg .form-check-input {
+  margin-left: -8.5em;
+  height: 4em;
+  width: 8em;
+}
+
+.form-switch.form-switch-lg .form-check-label {
+  padding-top: 1.5em;
 }

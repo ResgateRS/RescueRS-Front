@@ -48,12 +48,10 @@ export default function MinhasSolicitacoes() {
 
   return (
     <Layout>
-      <Header />
-
-      <h4 className="mb-4">Minhas Solicitações</h4>
+      <h5 className="mb-4">Minhas Solicitações</h5>
 
       <Button
-        className="mb-4 w-100 text-uppercase py-3"
+        className="mb-4 w-100 text-uppercase py-3 fw-medium"
         size="lg"
         onClick={handleSolicitarResgate}
       >

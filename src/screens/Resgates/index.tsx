@@ -18,11 +18,15 @@ export default function Resgates() {
   async function fetchDataPending(page?: string) {
     let url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues`;
     if (proximity) {
-      url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescuesByProximity`;
+      url = `${
+        import.meta.env.VITE_API_URL
+      }/Rescue/ListPendingRescuesByProximity`;
     }
     return await get<APIResponseListPendingRescues>(url, {
       search:
-        proximity && typeof latitude === "number" && typeof longitude === "number"
+        proximity &&
+        typeof latitude === "number" &&
+        typeof longitude === "number"
           ? new URLSearchParams({
               latitude: latitude.toString(),
               longitude: longitude.toString(),
@@ -45,7 +49,9 @@ export default function Resgates() {
 
   async function fetchDataCompleted(page?: string) {
     return await get<APIResponseListPendingRescues>(
-      `${import.meta.env.VITE_API_URL}/Rescue/ListCompletedRescues?latitude=${latitude}&longitude=${longitude}`,
+      `${
+        import.meta.env.VITE_API_URL
+      }/Rescue/ListCompletedRescues?latitude=${latitude}&longitude=${longitude}`,
       {
         headers: page
           ? {
@@ -55,7 +61,7 @@ export default function Resgates() {
           : {
               "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
             },
-      }
+      },
     );
   }
 
@@ -67,21 +73,24 @@ export default function Resgates() {
     queryKey: ["ListPengingRescues", token, latitude, longitude, proximity],
     queryFn: ({ pageParam }) => fetchDataPending(pageParam as string),
     initialPageParam: undefined,
-    getNextPageParam: (lastPage) => (lastPage.Data && lastPage.Data.length > 0 ? lastPage.Data[lastPage.Data.length - 1].rescueId : null),
+    getNextPageParam: (lastPage) =>
+      lastPage.Data && lastPage.Data.length > 0
+        ? lastPage.Data[lastPage.Data.length - 1].rescueId
+        : null,
   });
   const queryCompleted = useInfiniteQuery<APIResponseListPendingRescues>({
     queryKey: ["ListCompletedRescues", token, latitude, longitude],
     queryFn: ({ pageParam }) => fetchDataCompleted(pageParam as string),
     initialPageParam: undefined,
-    getNextPageParam: (lastPage) => (lastPage.Data && lastPage.Data?.length > 0 ? lastPage.Data[lastPage.Data.length - 1].rescueId : null),
+    getNextPageParam: (lastPage) =>
+      lastPage.Data && lastPage.Data?.length > 0
+        ? lastPage.Data[lastPage.Data.length - 1].rescueId
+        : null,
   });
-
-  queryPending.isSuccess && console.log(queryPending.data.pages[0]);
 
   return (
     <Layout>
-      <Header />
-      <h4 className="d-flex align-items-center justify-content-between mb-4">
+      <h5 className="d-flex align-items-center justify-content-between mb-4">
         Resgates
         <div className="d-flex align-items-center">
           <span className="fs-6 fw-normal me-2">Ordem:</span>
@@ -95,13 +104,17 @@ export default function Resgates() {
             <option value={"true"}>Proximidade</option>
           </Form.Select>
         </div>
-      </h4>
+      </h5>
 
       <Tabs defaultActiveKey="pending" className="w-100" fill>
         <Tab eventKey="pending" title="Pendentes">
-          {queryPending.isFetched && queryPending.data?.pages[0].Data?.length === 0 && (
-            <Alert variant="light">Nenhum registro encontrado</Alert>
-          )}
+          {queryPending.isFetched &&
+            (!queryPending.data?.pages[0].Data ||
+              queryPending.data?.pages[0].Data?.length === 0) && (
+              <Alert variant="light" className="mt-4 text-center">
+                Nenhum registro encontrado
+              </Alert>
+            )}
           <ListGroup className="w-100">
             {queryPending.data?.pages.map((page, key) => {
               return (
@@ -129,9 +142,13 @@ export default function Resgates() {
           />
         </Tab>
         <Tab eventKey="completed" title="Concluídos">
-          {queryCompleted.isFetched && queryCompleted.data?.pages[0].Data?.length === 0 && (
-            <Alert variant="light">Nenhum registro encontrado</Alert>
-          )}
+          {queryCompleted.isFetched &&
+            (!queryCompleted.data?.pages[0].Data ||
+              queryCompleted.data?.pages[0].Data?.length === 0) && (
+              <Alert variant="light" className="mt-4 text-center">
+                Nenhum registro encontrado
+              </Alert>
+            )}
           <ListGroup className="w-100">
             {queryCompleted.data?.pages.map((page, key) => {
               return (
@@ -155,7 +172,9 @@ export default function Resgates() {
           <InfiniteScroll
             more={queryCompleted.hasNextPage}
             load={fetchDataCompletedNextPage}
-            loading={queryCompleted.isFetching || queryCompleted.isFetchingNextPage}
+            loading={
+              queryCompleted.isFetching || queryCompleted.isFetchingNextPage
+            }
           />
         </Tab>
       </Tabs>

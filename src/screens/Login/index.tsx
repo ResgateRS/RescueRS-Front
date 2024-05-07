@@ -25,6 +25,7 @@ export default function Login() {
   }, [token]);
 
   function handlePhoneNumberChange(value?: string) {
+    setPhoneNumber(value);
     if (!value?.length) {
       return setPhoneNumberError("Número de celular obrigatório");
     }
@@ -33,7 +34,6 @@ export default function Login() {
       return setPhoneNumberError("Número de celular inválido");
     }
     setPhoneNumberError(undefined);
-    setPhoneNumber(value);
   }
 
   async function handleLogin(rescuer: boolean) {
@@ -59,7 +59,7 @@ export default function Login() {
       navigate("minhasSolicitacoes");
     } else {
       setApiError(
-        resp.body.Message ?? "Ocorreu algum problema, tente novamente"
+        resp.body.Message ?? "Ocorreu algum problema, tente novamente",
       );
     }
   }
@@ -76,46 +76,40 @@ export default function Login() {
 
   return (
     <Layout>
-      <Header />
+      <h5 className="mb-4">Acesso ao sistema</h5>
 
-      <h4 className="mb-4">Acesso ao sistema</h4>
-
-      <Card className="w-100 shadow-sm">
-        <Card.Body>
-          <Form>
-            <Form.Group className="mb-4">
-              <Form.Label>Celular</Form.Label>
-              <PhoneNumberFormControl
-                value={phoneNumber}
-                onChange={handlePhoneNumberChange}
-              />
-            </Form.Group>
-
-            {!!error && <Alert variant="danger">{error}</Alert>}
-
-            <Button
-              className="mb-4 w-100 text-uppercase py-3"
-              size="lg"
-              onClick={handleSolicitarResgate}
-              disabled={loading}
-            >
-              {loading && <Spinner size="sm" className="me-2" />} Solicitar
-              Resgate
-            </Button>
-
-            <Button
-              variant="dark"
-              className="mb-4 w-100 text-uppercase py-3"
-              size="lg"
-              onClick={handleEstouResgatando}
-              disabled={loading}
-            >
-              {loading && <Spinner size="sm" className="me-2" />} Estou
-              Resgatando
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
+      <Form>
+        <Form.Group className="mb-4">
+          <Form.Label>Celular</Form.Label>
+          <PhoneNumberFormControl
+            value={phoneNumber}
+            onChange={handlePhoneNumberChange}
+          />
+        </Form.Group>
+        {!!error && <Alert variant="danger">{error}</Alert>}
+        <Button
+          className="mb-4 w-100 text-uppercase py-3 fw-medium"
+          size="lg"
+          onClick={handleSolicitarResgate}
+          disabled={loading || !phoneNumber || !!phoneNumberError}
+        >
+          {loading && <Spinner size="sm" className="me-2" />} Solicitar Resgate
+        </Button>
+        <div className="d-flex align-items-center mb-4">
+          <hr className="flex-fill me-2" />
+          ou
+          <hr className="flex-fill ms-2" />
+        </div>
+        <Button
+          variant="dark"
+          className="mb-4 w-100 text-uppercase py-3 fw-medium"
+          size="lg"
+          onClick={handleEstouResgatando}
+          disabled={loading || !phoneNumber || !!phoneNumberError}
+        >
+          {loading && <Spinner size="sm" className="me-2" />} Estou Resgatando
+        </Button>
+      </Form>
     </Layout>
   );
 }

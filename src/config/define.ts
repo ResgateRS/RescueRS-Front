@@ -38,9 +38,12 @@ export type ListPendingRescuesType = {
   longitude: number;
   cellphone: string;
   rescued: boolean;
+  distance: number;
 };
 
-export type APIResponseListPendingRescues = APIResponse<ListPendingRescuesType[]>;
+export type APIResponseListPendingRescues = APIResponse<
+  ListPendingRescuesType[]
+>;
 
 export type APIRequestRequest = {
   totalPeopleNumber: number;
