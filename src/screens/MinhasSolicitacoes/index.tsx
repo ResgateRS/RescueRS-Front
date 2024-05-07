@@ -76,6 +76,7 @@ export default function MinhasSolicitacoes() {
                     elderlyNumber={item.elderlyNumber}
                     totalPeopleNumber={item.totalPeopleNumber}
                     disabledNumber={item.disabledNumber}
+                    rescued={item.rescued}
                   />
                 );
               })}
