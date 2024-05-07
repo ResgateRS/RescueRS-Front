@@ -16,24 +16,30 @@ export default function MinhasSolicitacoes() {
 
   const query = useInfiniteQuery<APIResponseListMyRescues>({
     queryKey: ["ListMyRescues"],
-    queryFn: ({ pageParam }) => fetchData(pageParam),
+    queryFn: ({ pageParam }) => fetchData(pageParam as string),
     initialPageParam: undefined,
-    getNextPageParam: (lastPage) => (lastPage.Data && lastPage.Data.length > 0 ? lastPage.Data[lastPage.Data.length - 1].rescueId : null),
+    getNextPageParam: (lastPage) =>
+      lastPage.Data && lastPage.Data.length > 0
+        ? lastPage.Data[lastPage.Data.length - 1].rescueId
+        : null,
   });
 
-  async function fetchData(page: any) {
-    return await get<APIResponseListMyRescues>(`${import.meta.env.VITE_API_URL}/Rescue/ListMyRescues`, {
-      headers: page
-        ? {
-            Authorization: `Bearer ${token}`,
-            "X-Cursor": page,
-            "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
-          }
-        : {
-            Authorization: `Bearer ${token}`,
-            "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
-          },
-    });
+  async function fetchData(page?: string) {
+    return await get<APIResponseListMyRescues>(
+      `${import.meta.env.VITE_API_URL}/Rescue/ListMyRescues`,
+      {
+        headers: page
+          ? {
+              Authorization: `Bearer ${token}`,
+              "X-Cursor": page,
+              "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
+            }
+          : {
+              Authorization: `Bearer ${token}`,
+              "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
+            },
+      },
+    );
   }
 
   function handleSolicitarResgate() {
@@ -46,11 +52,17 @@ export default function MinhasSolicitacoes() {
 
       <h4 className="mb-4">Minhas Solicitações</h4>
 
-      <Button className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleSolicitarResgate}>
+      <Button
+        className="mb-4 w-100 text-uppercase py-3"
+        size="lg"
+        onClick={handleSolicitarResgate}
+      >
         Solicitar Resgate
       </Button>
 
-      {query.isFetched && query.data?.pages[0].Data?.length === 0 && <Alert variant="light">Nenhum registro encontrado</Alert>}
+      {query.isFetched && query.data?.pages[0].Data?.length === 0 && (
+        <Alert variant="light">Nenhum registro encontrado</Alert>
+      )}
 
       <ListGroup className="w-100">
         {query.data?.pages.map((page, key) => {
