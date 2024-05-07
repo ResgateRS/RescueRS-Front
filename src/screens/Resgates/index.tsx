@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Alert, ListGroup, Spinner, Tab, Tabs } from "react-bootstrap";
+import { Alert, Form, ListGroup, Spinner, Tab, Tabs } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-import React from "react";
+import React, { useState } from "react";
 import RestageItem from "../../components/RestageItem";
 import { APIResponseListPengingRescues } from "../../config/define";
 import Header from "../../components/Header";
@@ -12,9 +12,14 @@ import InfiniteScroll from "../../components/InfiniteScroll";
 export default function Resgates() {
   const navigate = useNavigate();
   const { latitude, longitude, token } = useAuth();
+  const [proximity, setProximity] = useState(false);
 
-  async function fetchDataPending(page: any) {
-    let resp = await  fetch(`${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues?latitude=${latitude}&longitude=${longitude}`,
+  async function fetchDataPending(page: any, proximity: boolean) {
+    let url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues?latitude=${latitude}&longitude=${longitude}`;
+    if(proximity){
+      url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescuesByProximity?latitude=${latitude}&longitude=${longitude}`;
+    }
+    let resp = await  fetch(url,
       {
         headers: page ? {
 					Authorization: `Bearer ${token}`,
@@ -54,8 +59,8 @@ export default function Resgates() {
   }
 
   const queryPending = useInfiniteQuery<APIResponseListPengingRescues>({
-    queryKey: ["ListPengingRescues"],
-    queryFn: ({ pageParam }) => fetchDataPending(pageParam),
+    queryKey: ["ListPengingRescues", proximity],
+    queryFn: ({ pageParam }) => fetchDataPending(pageParam, proximity),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.Data.length>0 ? lastPage.Data[lastPage.Data.length-1].rescueId : null,
   });
@@ -71,7 +76,16 @@ export default function Resgates() {
   return (
     <Layout>
       <Header/>
-			<h4 className="mb-4">Resgates</h4>
+			<h4 className="d-flex align-items-center justify-content-between mb-4">
+        Resgates
+        <div className="d-flex align-items-center">
+          <span className="fs-6 fw-normal me-2">Ordem:</span>
+          <Form.Select onChange={(e)=>{ setProximity(e.currentTarget.value==="true"); }} style={{width: "auto"}}>
+            <option value={"false"}>Tempo</option>
+            <option value={"true"}>Proximidade</option>
+          </Form.Select>
+        </div>
+      </h4>
 
       <Tabs defaultActiveKey="pending" className="w-100" fill>
         <Tab eventKey="pending" title="Pendentes">
