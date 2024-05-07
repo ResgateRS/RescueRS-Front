@@ -18,11 +18,11 @@ export default function Login() {
 
   const error = phoneNumberError ?? apiError;
 
-  useEffect(()=>{
-    if(token){
+  useEffect(() => {
+    if (token) {
       navigate(rescuer ? "/resgates" : "/minhasSolicitacoes");
     }
-  },[])
+  }, [token]);
 
   function handlePhoneNumberChange(value?: string) {
     if (!value?.length) {
@@ -37,7 +37,7 @@ export default function Login() {
   }
 
   async function handleLogin(rescuer: boolean) {
-	setLoading(true);
+    setLoading(true);
     setApiError(undefined);
     const parsedPhoneNumber = parsePhoneNumber(phoneNumber!, "BR");
     const cellphone = parsedPhoneNumber!.nationalNumber;
@@ -48,7 +48,7 @@ export default function Login() {
       body: JSON.stringify(input),
     });
     const body = (await resp.json()) as APIResponse;
-	setLoading(false);
+    setLoading(false);
     return { status: resp.ok, body: body };
   }
 
@@ -76,9 +76,9 @@ export default function Login() {
 
   return (
     <Layout>
-      	<Header />
+      <Header />
 
-		<h4 className="mb-4">Acesso ao sistema</h4>
+      <h4 className="mb-4">Acesso ao sistema</h4>
 
       <Card className="w-100 shadow-sm">
         <Card.Body>
@@ -97,9 +97,10 @@ export default function Login() {
               className="mb-4 w-100 text-uppercase py-3"
               size="lg"
               onClick={handleSolicitarResgate}
-			  disabled={loading}
+              disabled={loading}
             >
-              {loading && <Spinner size="sm" className="me-2"/>} Solicitar Resgate
+              {loading && <Spinner size="sm" className="me-2" />} Solicitar
+              Resgate
             </Button>
 
             <Button
@@ -107,9 +108,10 @@ export default function Login() {
               className="mb-4 w-100 text-uppercase py-3"
               size="lg"
               onClick={handleEstouResgatando}
-			  disabled={loading}
+              disabled={loading}
             >
-              {loading && <Spinner size="sm" className="me-2"/>} Estou Resgatando
+              {loading && <Spinner size="sm" className="me-2" />} Estou
+              Resgatando
             </Button>
           </Form>
         </Card.Body>
