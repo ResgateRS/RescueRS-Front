@@ -1,10 +1,4 @@
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 type AuthContextProps = {
   token: string | undefined;
@@ -50,17 +44,30 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   };
 
   useEffect(() => {
+    function handleLocation() {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
+
+        setLatitude(lat);
+        setLongitude(long);
+      });
+    }
+
+    handleLocation();
+
+    let intervalLocation = setInterval(() => {
+      handleLocation();
+    });
+
     const auth = getAuthFromStorage();
     setToken(auth.token);
     setRescuer(auth.rescuer);
-    navigator.geolocation.getCurrentPosition((position) => {
-      const lat = position.coords.latitude;
-      const long = position.coords.longitude;
-
-      setLatitude(lat);
-      setLongitude(long);
-    });
     setLoading(false);
+
+    return () => {
+      clearInterval(intervalLocation);
+    };
   }, []);
 
   if (loading) return null;

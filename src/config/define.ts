@@ -26,7 +26,7 @@ export type ListMyRescuesType = {
 
 export type APIResponseListMyRescues = APIResponse<ListMyRescuesType[]>;
 
-export type ListPengingRescuesType = {
+export type ListPendingRescuesType = {
   rescueId: string;
   requestDateTime: string;
   totalPeopleNumber: number;
@@ -40,6 +40,14 @@ export type ListPengingRescuesType = {
   rescued: boolean;
 };
 
-export type APIResponseListPengingRescues = APIResponse<
-  ListPengingRescuesType[]
->;
+export type APIResponseListPendingRescues = APIResponse<ListPendingRescuesType[]>;
+
+export type APIRequestRequest = {
+  totalPeopleNumber: number;
+  childrenNumber: number;
+  elderlyNumber: number;
+  disabledNumber: number;
+  animalsNumber: number;
+  latitude: number;
+  longitude: number;
+};

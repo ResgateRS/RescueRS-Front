@@ -5,13 +5,12 @@ import { Alert, Form, ListGroup, Tab, Tabs } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import React, { useState } from "react";
 import RestageItem from "../../components/RestageItem";
-import { APIResponseListPengingRescues } from "../../config/define";
+import { APIResponseListPendingRescues } from "../../config/define";
 import Header from "../../components/Header";
 import InfiniteScroll from "../../components/InfiniteScroll";
 import { useApi } from "../../hooks/api";
 
 export default function Resgates() {
-  // const navigate = useNavigate();
   const { latitude, longitude, token } = useAuth();
   const [proximity, setProximity] = useState(false);
   const { get } = useApi();
@@ -19,15 +18,11 @@ export default function Resgates() {
   async function fetchDataPending(page?: string) {
     let url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues`;
     if (proximity) {
-      url = `${
-        import.meta.env.VITE_API_URL
-      }/Rescue/ListPendingRescuesByProximity`;
+      url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescuesByProximity`;
     }
-    return await get<APIResponseListPengingRescues>(url, {
+    return await get<APIResponseListPendingRescues>(url, {
       search:
-        proximity &&
-        typeof latitude === "number" &&
-        typeof longitude === "number"
+        proximity && typeof latitude === "number" && typeof longitude === "number"
           ? new URLSearchParams({
               latitude: latitude.toString(),
               longitude: longitude.toString(),
@@ -49,10 +44,8 @@ export default function Resgates() {
   }
 
   async function fetchDataCompleted(page?: string) {
-    return await get<APIResponseListPengingRescues>(
-      `${
-        import.meta.env.VITE_API_URL
-      }/Rescue/ListCompletedRescues?latitude=${latitude}&longitude=${longitude}`,
+    return await get<APIResponseListPendingRescues>(
+      `${import.meta.env.VITE_API_URL}/Rescue/ListCompletedRescues?latitude=${latitude}&longitude=${longitude}`,
       {
         headers: page
           ? {
@@ -70,23 +63,17 @@ export default function Resgates() {
     queryCompleted.fetchNextPage();
   }
 
-  const queryPending = useInfiniteQuery<APIResponseListPengingRescues>({
-    queryKey: ["ListPengingRescues", token, proximity],
+  const queryPending = useInfiniteQuery<APIResponseListPendingRescues>({
+    queryKey: ["ListPengingRescues", token, latitude, longitude, proximity],
     queryFn: ({ pageParam }) => fetchDataPending(pageParam as string),
     initialPageParam: undefined,
-    getNextPageParam: (lastPage) =>
-      lastPage.Data && lastPage.Data.length > 0
-        ? lastPage.Data[lastPage.Data.length - 1].rescueId
-        : null,
+    getNextPageParam: (lastPage) => (lastPage.Data && lastPage.Data.length > 0 ? lastPage.Data[lastPage.Data.length - 1].rescueId : null),
   });
-  const queryCompleted = useInfiniteQuery<APIResponseListPengingRescues>({
-    queryKey: ["ListCompletedRescues", token],
+  const queryCompleted = useInfiniteQuery<APIResponseListPendingRescues>({
+    queryKey: ["ListCompletedRescues", token, latitude, longitude],
     queryFn: ({ pageParam }) => fetchDataCompleted(pageParam as string),
     initialPageParam: undefined,
-    getNextPageParam: (lastPage) =>
-      lastPage.Data && lastPage.Data?.length > 0
-        ? lastPage.Data[lastPage.Data.length - 1].rescueId
-        : null,
+    getNextPageParam: (lastPage) => (lastPage.Data && lastPage.Data?.length > 0 ? lastPage.Data[lastPage.Data.length - 1].rescueId : null),
   });
 
   queryPending.isSuccess && console.log(queryPending.data.pages[0]);
@@ -112,10 +99,9 @@ export default function Resgates() {
 
       <Tabs defaultActiveKey="pending" className="w-100" fill>
         <Tab eventKey="pending" title="Pendentes">
-          {queryPending.isFetched &&
-            queryPending.data?.pages[0].Data?.length === 0 && (
-              <Alert variant="light">Nenhum registro encontrado</Alert>
-            )}
+          {queryPending.isFetched && queryPending.data?.pages[0].Data?.length === 0 && (
+            <Alert variant="light">Nenhum registro encontrado</Alert>
+          )}
           <ListGroup className="w-100">
             {queryPending.data?.pages.map((page, key) => {
               return (
@@ -143,10 +129,9 @@ export default function Resgates() {
           />
         </Tab>
         <Tab eventKey="completed" title="Concluídos">
-          {queryCompleted.isFetched &&
-            queryCompleted.data?.pages[0].Data?.length === 0 && (
-              <Alert variant="light">Nenhum registro encontrado</Alert>
-            )}
+          {queryCompleted.isFetched && queryCompleted.data?.pages[0].Data?.length === 0 && (
+            <Alert variant="light">Nenhum registro encontrado</Alert>
+          )}
           <ListGroup className="w-100">
             {queryCompleted.data?.pages.map((page, key) => {
               return (
@@ -170,9 +155,7 @@ export default function Resgates() {
           <InfiniteScroll
             more={queryCompleted.hasNextPage}
             load={fetchDataCompletedNextPage}
-            loading={
-              queryCompleted.isFetching || queryCompleted.isFetchingNextPage
-            }
+            loading={queryCompleted.isFetching || queryCompleted.isFetchingNextPage}
           />
         </Tab>
       </Tabs>
