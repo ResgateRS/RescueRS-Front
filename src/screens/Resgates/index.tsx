@@ -16,47 +16,51 @@ export default function Resgates() {
   const [proximity, setProximity] = useState(false);
   const { get } = useApi();
 
-  async function fetchDataPending(page?: any) {
+  async function fetchDataPending(page?: string) {
     let url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues`;
-    if(proximity){
-      url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescuesByProximity`;
+    if (proximity) {
+      url = `${
+        import.meta.env.VITE_API_URL
+      }/Rescue/ListPendingRescuesByProximity`;
     }
-    return await get<APIResponseListPengingRescues>(
-      url,
-      {
-        search:
-          proximity && typeof latitude === "number" && typeof longitude === "number"
-            ? new URLSearchParams({
-                latitude: latitude.toString(),
-                longitude: longitude.toString(),
-              })
-            : undefined,
-        headers: page ? {
-              "X-Cursor": page.toString(),
-              "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
-            } : {
-              "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
-            },
-      }
-    );
+    return await get<APIResponseListPengingRescues>(url, {
+      search:
+        proximity &&
+        typeof latitude === "number" &&
+        typeof longitude === "number"
+          ? new URLSearchParams({
+              latitude: latitude.toString(),
+              longitude: longitude.toString(),
+            })
+          : undefined,
+      headers: page
+        ? {
+            "X-Cursor": page.toString(),
+            "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
+          }
+        : {
+            "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
+          },
+    });
   }
 
   async function fetchDataPendingNextPage() {
     queryPending.fetchNextPage();
   }
 
-  async function fetchDataCompleted(page?: any) {
+  async function fetchDataCompleted(page?: string) {
     return await get<APIResponseListPengingRescues>(
       `${
         import.meta.env.VITE_API_URL
       }/Rescue/ListCompletedRescues?latitude=${latitude}&longitude=${longitude}`,
       {
-        headers:
-          page ? {
-                "X-Cursor": page.toString(),
-                "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
-            } : {
-                "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
+        headers: page
+          ? {
+              "X-Cursor": page.toString(),
+              "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
+            }
+          : {
+              "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
             },
       }
     );
@@ -68,19 +72,19 @@ export default function Resgates() {
 
   const queryPending = useInfiniteQuery<APIResponseListPengingRescues>({
     queryKey: ["ListPengingRescues", token, proximity],
-    queryFn: ({ pageParam }) => fetchDataPending(pageParam),
+    queryFn: ({ pageParam }) => fetchDataPending(pageParam as string),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.Data.length > 0
+      lastPage.Data && lastPage.Data.length > 0
         ? lastPage.Data[lastPage.Data.length - 1].rescueId
         : null,
   });
   const queryCompleted = useInfiniteQuery<APIResponseListPengingRescues>({
     queryKey: ["ListCompletedRescues", token],
-    queryFn: ({ pageParam }) => fetchDataCompleted(pageParam),
+    queryFn: ({ pageParam }) => fetchDataCompleted(pageParam as string),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.Data.length > 0
+      lastPage.Data && lastPage.Data?.length > 0
         ? lastPage.Data[lastPage.Data.length - 1].rescueId
         : null,
   });
@@ -89,12 +93,17 @@ export default function Resgates() {
 
   return (
     <Layout>
-      <Header/>
-			<h4 className="d-flex align-items-center justify-content-between mb-4">
+      <Header />
+      <h4 className="d-flex align-items-center justify-content-between mb-4">
         Resgates
         <div className="d-flex align-items-center">
           <span className="fs-6 fw-normal me-2">Ordem:</span>
-          <Form.Select onChange={(e)=>{ setProximity(e.currentTarget.value==="true"); }} style={{width: "auto"}}>
+          <Form.Select
+            onChange={(e) => {
+              setProximity(e.currentTarget.value === "true");
+            }}
+            style={{ width: "auto" }}
+          >
             <option value={"false"}>Tempo</option>
             <option value={"true"}>Proximidade</option>
           </Form.Select>
@@ -111,7 +120,7 @@ export default function Resgates() {
             {queryPending.data?.pages.map((page, key) => {
               return (
                 <React.Fragment key={key}>
-                  {page.Data.map((item, itemKey) => {
+                  {page.Data?.map((item, itemKey) => {
                     return (
                       <RestageItem
                         key={itemKey}
@@ -142,7 +151,7 @@ export default function Resgates() {
             {queryCompleted.data?.pages.map((page, key) => {
               return (
                 <React.Fragment key={key}>
-                  {page.Data.map((item, itemKey) => {
+                  {page.Data?.map((item, itemKey) => {
                     return (
                       <RestageItem
                         key={itemKey}

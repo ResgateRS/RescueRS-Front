@@ -45,7 +45,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   const setAuth = (token?: string, rescuer?: boolean) => {
     setToken(token);
-    setRescuer(rescuer);
+    setRescuer(!!rescuer);
     saveAuthToStorage(token, rescuer);
   };
 
@@ -60,10 +60,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       setLatitude(lat);
       setLongitude(long);
     });
-	setLoading(false);
+    setLoading(false);
   }, []);
 
-  if(loading) return null;
+  if (loading) return null;
 
   const value = {
     token,

@@ -6,7 +6,7 @@ import Layout from "../../components/Layout";
 import { useAuth } from "../../context/AuthContext";
 import parsePhoneNumber from "libphonenumber-js";
 import { PhoneNumberFormControl } from "../../components/PhoneNumberFormControl";
-import { APIResponse } from "../../config/define";
+import { APIResponseLogin } from "../../config/define";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export default function Login() {
       method: "POST",
       body: JSON.stringify(input),
     });
-    const body = (await resp.json()) as APIResponse;
+    const body = (await resp.json()) as APIResponseLogin;
     setLoading(false);
     return { status: resp.ok, body: body };
   }
@@ -55,7 +55,7 @@ export default function Login() {
   async function handleSolicitarResgate() {
     const resp = await handleLogin(false);
     if (resp.status && resp.body.Result === 1) {
-      setAuth(resp.body.Data.token, resp.body.Data.rescuer);
+      setAuth(resp.body.Data?.token, false);
       navigate("minhasSolicitacoes");
     } else {
       setApiError(
@@ -67,7 +67,7 @@ export default function Login() {
   async function handleEstouResgatando() {
     const resp = await handleLogin(false);
     if (resp.status) {
-      setAuth(resp.body.Data.token, resp.body.Data.rescuer);
+      setAuth(resp.body.Data?.token, true);
       navigate("resgates");
     } else {
       setApiError("Ocorreu algum problema, tente novamente");
