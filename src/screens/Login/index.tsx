@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Button, Card, Form } from "react-bootstrap";
+import { Alert, Button, Card, Form, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Layout from "../../components/Layout";
@@ -13,6 +13,7 @@ export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState<string>();
   const [phoneNumberError, setPhoneNumberError] = useState<string>();
   const [apiError, setApiError] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
   const error = phoneNumberError ?? apiError;
 
@@ -29,6 +30,7 @@ export default function Login() {
   }
 
   async function handleLogin(rescuer: boolean) {
+	setLoading(true);
     setApiError(undefined);
     const parsedPhoneNumber = parsePhoneNumber(phoneNumber!, "BR");
     const cellphone = parsedPhoneNumber!.nationalNumber;
@@ -39,6 +41,7 @@ export default function Login() {
       body: JSON.stringify(input),
     });
     const body = (await resp.json()) as APIResponse;
+	setLoading(false);
     return { status: resp.ok, body: body };
   }
 
@@ -66,9 +69,9 @@ export default function Login() {
 
   return (
     <Layout>
-      <Header />
+      	<Header />
 
-			<h4 className="mb-4">Acesso ao sistema</h4>
+		<h4 className="mb-4">Acesso ao sistema</h4>
 
       <Card className="w-100 shadow-sm">
         <Card.Body>
@@ -87,8 +90,9 @@ export default function Login() {
               className="mb-4 w-100 text-uppercase py-3"
               size="lg"
               onClick={handleSolicitarResgate}
+			  disabled={loading}
             >
-              Solicitar Resgate
+              {loading && <Spinner size="sm" className="me-2"/>} Solicitar Resgate
             </Button>
 
             <Button
@@ -96,8 +100,9 @@ export default function Login() {
               className="mb-4 w-100 text-uppercase py-3"
               size="lg"
               onClick={handleEstouResgatando}
+			  disabled={loading}
             >
-              Estou Resgatando
+              {loading && <Spinner size="sm" className="me-2"/>} Estou Resgatando
             </Button>
           </Form>
         </Card.Body>

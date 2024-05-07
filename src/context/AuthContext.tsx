@@ -13,7 +13,7 @@ type AuthContextProps = {
   setRescuer: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   latitude: number | undefined;
   longitude: number | undefined;
-  setAuth: (token: string, rescuer: boolean) => void;
+  setAuth: (token?: string, rescuer?: boolean) => void;
 };
 
 type AuthProviderProps = {
@@ -26,7 +26,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-const saveAuthToStorage = (token: string, rescuer: boolean) => {
+const saveAuthToStorage = (token?: string, rescuer?: boolean) => {
   const auth = { token, rescuer };
   localStorage.setItem("auth", JSON.stringify(auth));
 };
@@ -37,12 +37,13 @@ const getAuthFromStorage = () => {
 };
 
 export default function AuthProvider({ children }: AuthProviderProps) {
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState<string>();
   const [rescuer, setRescuer] = useState<boolean>();
   const [latitude, setLatitude] = useState<number>();
   const [longitude, setLongitude] = useState<number>();
 
-  const setAuth = (token: string, rescuer: boolean) => {
+  const setAuth = (token?: string, rescuer?: boolean) => {
     setToken(token);
     setRescuer(rescuer);
     saveAuthToStorage(token, rescuer);
@@ -59,7 +60,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       setLatitude(lat);
       setLongitude(long);
     });
+	setLoading(false);
   }, []);
+
+  if(loading) return null;
 
   const value = {
     token,
