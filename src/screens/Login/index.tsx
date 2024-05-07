@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Button, Card, Form, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
@@ -6,16 +6,23 @@ import Layout from "../../components/Layout";
 import { useAuth } from "../../context/AuthContext";
 import parsePhoneNumber from "libphonenumber-js";
 import { PhoneNumberFormControl } from "../../components/PhoneNumberFormControl";
+import { APIResponse } from "../../config/define";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { setAuth } = useAuth();
+  const { setAuth, token, rescuer } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState<string>();
   const [phoneNumberError, setPhoneNumberError] = useState<string>();
   const [apiError, setApiError] = useState<string>();
   const [loading, setLoading] = useState(false);
 
   const error = phoneNumberError ?? apiError;
+
+  useEffect(()=>{
+    if(token){
+      navigate(rescuer ? "/resgates" : "/minhasSolicitacoes");
+    }
+  },[])
 
   function handlePhoneNumberChange(value?: string) {
     if (!value?.length) {

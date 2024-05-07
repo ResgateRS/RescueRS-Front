@@ -7,10 +7,13 @@ import Layout from "../../components/Layout";
 import { Link, useNavigate } from "react-router-dom";
 import { OutputFormat, RequestType, geocode } from "react-geocode";
 import Header from "../../components/Header";
+import { APIResponse } from "../../config/define";
+import { useAuth } from "../../context/AuthContext";
 
 export default function SolicitarResgate(){
 
 	const navigate = useNavigate();
+	const {token, latitude, longitude} = useAuth();
 
 	const [totalPeopleNumber, setTotalPeopleNumber] = useState<number>(0);
 	const [childrenNumber, setChildrenNumber] = useState<number>(0);
@@ -18,11 +21,15 @@ export default function SolicitarResgate(){
 	const [disabledNumber, setDisabledNumber] = useState<number>(0);
 	const [animalsNumber, setAnimalsNumber] = useState<number>(0);
 	const [address, setAddress] = useState<string>("");
+	const [utilizarLocalizacao, setUtilizarLocalizacao] = useState(false);
 
 	const [error, setError] = useState("");
 
 	async function handleSolicitarResgate(){
-		let location = await handleLatLong();
+		let location;
+		if(!utilizarLocalizacao){
+			location = await handleLatLong();
+		}
 
 		const data = {
 			"totalPeopleNumber": totalPeopleNumber,
@@ -30,14 +37,21 @@ export default function SolicitarResgate(){
 			"elderlyNumber": elderlyNumber,
 			"disabledNumber": disabledNumber,
 			"animalsNumber": animalsNumber,
-			"latitude": location.lat,
-			"longitude": location.lng,
+			"latitude": utilizarLocalizacao ? latitude : location.lat,
+			"longitude": utilizarLocalizacao ? longitude: location.lng,
 		}
 
-		const resp = await fetch(`${import.meta.env.API_URL}/Rescue/Request`, {method: 'post', body: JSON.stringify(data)});
+		const resp = await fetch(`${import.meta.env.VITE_API_URL}/Rescue/Request`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json"
+			},
+			method: 'post',
+			body: JSON.stringify(data)
+		});
 		const body = await resp.json() as APIResponse;
 		if(resp.status){
-			navigate("/minhasSolicitacoes");
+			handleVoltar();
 		}else{
 			setError("Ocorreu algum problema, tente novamente");
 		}
@@ -48,7 +62,7 @@ export default function SolicitarResgate(){
 		return location = resp.results[0].geometry.location;
 	}
 
-	function handleVolta(){
+	function handleVoltar(){
 		navigate("/minhasSolicitacoes");
 	}
 
@@ -111,8 +125,10 @@ export default function SolicitarResgate(){
 
 						<Form.Group className="mb-3 ">
 							<Form.Label>Endereço Completo</Form.Label>
-							<Form.Control type="text" placeholder="Informe aqui o Endereço" size="lg" className="" value={address} onChange={(e)=>{ setAddress(e.currentTarget.value) }} />
+							<Form.Control type="text" placeholder="Informe aqui o Endereço" size="lg" className="" value={address} onChange={(e)=>{ setAddress(e.currentTarget.value) }} disabled={utilizarLocalizacao} />
 						</Form.Group>
+
+						<Form.Check type="switch" label="Utilizar minha localização atual" id="utilizar" className="mb-3" onChange={(e)=>{ setUtilizarLocalizacao(e.currentTarget.checked); }} />
 
 						{error!="" && (
 							<Alert variant="danger">{error}</Alert>
