@@ -40,7 +40,7 @@ export default function Resgates() {
     getNextPageParam: (lastPage) => lastPage.rescueId,
   });
   const queryCompleted = useInfiniteQuery<any>({
-    queryKey: ["ListComletedRescues"],
+    queryKey: ["ListCompletedRescues"],
     queryFn: ({ pageParam = 0 }) => fetchDataComleted(pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.rescueId,
