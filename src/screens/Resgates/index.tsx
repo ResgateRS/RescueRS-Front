@@ -16,7 +16,7 @@ export default function Resgates() {
   const [proximity, setProximity] = useState(false);
   const { get } = useApi();
 
-  async function fetchDataPending(page?: number) {
+  async function fetchDataPending(page?: any) {
     let url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues`;
     if(proximity){
       url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescuesByProximity`;
@@ -31,12 +31,10 @@ export default function Resgates() {
                 longitude: longitude.toString(),
               })
             : undefined,
-        headers: page
-          ? {
+        headers: page ? {
               "X-Cursor": page.toString(),
               "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
-            }
-          : {
+            } : {
               "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
             },
       }
@@ -47,21 +45,19 @@ export default function Resgates() {
     queryPending.fetchNextPage();
   }
 
-  async function fetchDataCompleted(page?: number) {
+  async function fetchDataCompleted(page?: any) {
     return await get<APIResponseListPengingRescues>(
       `${
         import.meta.env.VITE_API_URL
       }/Rescue/ListCompletedRescues?latitude=${latitude}&longitude=${longitude}`,
       {
         headers:
-          typeof page === "number"
-            ? {
+          page ? {
                 "X-Cursor": page.toString(),
                 "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
-              }
-            : {
+            } : {
                 "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
-              },
+            },
       }
     );
   }
@@ -72,7 +68,7 @@ export default function Resgates() {
 
   const queryPending = useInfiniteQuery<APIResponseListPengingRescues>({
     queryKey: ["ListPengingRescues", token, proximity],
-    queryFn: ({ pageParam }) => fetchDataPending(pageParam as number),
+    queryFn: ({ pageParam }) => fetchDataPending(pageParam),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) =>
       lastPage.Data.length > 0
@@ -81,7 +77,7 @@ export default function Resgates() {
   });
   const queryCompleted = useInfiniteQuery<APIResponseListPengingRescues>({
     queryKey: ["ListCompletedRescues", token],
-    queryFn: ({ pageParam }) => fetchDataCompleted(pageParam as number),
+    queryFn: ({ pageParam }) => fetchDataCompleted(pageParam),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) =>
       lastPage.Data.length > 0
