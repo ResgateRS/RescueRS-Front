@@ -4,68 +4,104 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Layout from "../../components/Layout";
 import { useAuth } from "../../context/AuthContext";
+import parsePhoneNumber from "libphonenumber-js";
+import { PhoneNumberFormControl } from "../../components/PhoneNumberFormControl";
 
-export default function Login(){
+export default function Login() {
+  const navigate = useNavigate();
+  const { setAuth } = useAuth();
+  const [phoneNumber, setPhoneNumber] = useState<string>();
+  const [phoneNumberError, setPhoneNumberError] = useState<string>();
+  const [apiError, setApiError] = useState<string>();
 
-	const navigate = useNavigate();
-	const {setToken, setRescuer} = useAuth();
+  const error = phoneNumberError ?? apiError;
 
-	const [celular, setCelular] = useState("");
-	const [error, setError] = useState("");
+  function handlePhoneNumberChange(value?: string) {
+    if (!value?.length) {
+      return setPhoneNumberError("Número de celular obrigatório");
+    }
+    const parsedPhoneNumber = parsePhoneNumber(value, "BR");
+    if (!parsedPhoneNumber?.isValid()) {
+      return setPhoneNumberError("Número de celular inválido");
+    }
+    setPhoneNumberError(undefined);
+    setPhoneNumber(value);
+  }
 
-	async function handleLogin(rescuer: boolean){
-		setError("");
-		const resp = await fetch(`${import.meta.env.VITE_API_URL}/Login`,{ headers: {"Content-Type": "application/json"}, method: "POST", body: JSON.stringify({"cellphone": celular, "rescuer": rescuer}) });
-		const body = await resp.json() as APIResponse;
-		return {status: resp.ok, body: body};
-	}
+  async function handleLogin(rescuer: boolean) {
+    setApiError(undefined);
+    const parsedPhoneNumber = parsePhoneNumber(phoneNumber!, "BR");
+    const cellphone = parsedPhoneNumber!.nationalNumber;
+    const input = { cellphone, rescuer };
+    const resp = await fetch(`${import.meta.env.VITE_API_URL}/Login`, {
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    const body = (await resp.json()) as APIResponse;
+    return { status: resp.ok, body: body };
+  }
 
-	async function handleSolicitarResgate(){
-		let resp = await handleLogin(false);
-		if(resp.status && resp.body.Result===1){
-			setToken(resp.body.Data.token)
-			setRescuer(resp.body.Data.rescuer)
-			navigate("minhasSolicitacoes");
-		}else{
-			setError(resp.body.Message ?? "Ocorreu algum problema, tente novamente");
-		}
-	}
+  async function handleSolicitarResgate() {
+    const resp = await handleLogin(false);
+    if (resp.status && resp.body.Result === 1) {
+      setAuth(resp.body.Data.token, resp.body.Data.rescuer);
+      navigate("minhasSolicitacoes");
+    } else {
+      setApiError(
+        resp.body.Message ?? "Ocorreu algum problema, tente novamente"
+      );
+    }
+  }
 
-	async function handleEstouResgatando(){
-		let resp = await handleLogin(false);
-		if(resp.status){
-			setToken(resp.body.Data.token)
-			setRescuer(resp.body.Data.rescuer)
-			navigate("resgates");
-		}else{
-			setError("Ocorreu algum problema, tente novamente");
-		}
-	}
+  async function handleEstouResgatando() {
+    const resp = await handleLogin(false);
+    if (resp.status) {
+      setAuth(resp.body.Data.token, resp.body.Data.rescuer);
+      navigate("resgates");
+    } else {
+      setApiError("Ocorreu algum problema, tente novamente");
+    }
+  }
 
-	return (
-		<Layout>
-			<Header/>
-			
+  return (
+    <Layout>
+      <Header />
+
 			<h4 className="mb-4">Acesso ao sistema</h4>
 
-			<Card className="w-100 shadow-sm">
-				<Card.Body>
-					<Form>
-						<Form.Group className="mb-4">
-							<Form.Label>Celular</Form.Label>
-							<Form.Control type="number" placeholder="Informe aqui o celular" size="lg" className="" value={celular} onChange={(e)=>{ setCelular(e.currentTarget.value) }} />
-						</Form.Group>
+      <Card className="w-100 shadow-sm">
+        <Card.Body>
+          <Form>
+            <Form.Group className="mb-4">
+              <Form.Label>Celular</Form.Label>
+              <PhoneNumberFormControl
+                value={phoneNumber}
+                onChange={handlePhoneNumberChange}
+              />
+            </Form.Group>
 
-						{error!="" && (
-							<Alert variant="danger">{error}</Alert>
-						)}
+            {!!error && <Alert variant="danger">{error}</Alert>}
 
-						<Button className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleSolicitarResgate}>Solicitar Resgate</Button>
+            <Button
+              className="mb-4 w-100 text-uppercase py-3"
+              size="lg"
+              onClick={handleSolicitarResgate}
+            >
+              Solicitar Resgate
+            </Button>
 
-						<Button variant="dark" className="mb-4 w-100 text-uppercase py-3" size="lg" onClick={handleEstouResgatando}>Estou Resgatando</Button>
-					</Form>
-				</Card.Body>
-			</Card>
-		</Layout>
-	)
+            <Button
+              variant="dark"
+              className="mb-4 w-100 text-uppercase py-3"
+              size="lg"
+              onClick={handleEstouResgatando}
+            >
+              Estou Resgatando
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Layout>
+  );
 }
