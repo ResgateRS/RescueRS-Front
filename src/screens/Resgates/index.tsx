@@ -132,6 +132,14 @@ export default function Resgates() {
                 </React.Fragment>
               );
             })}
+            <RestageItem
+              animalsNumber={2}
+              childrenNumber={1}
+              elderlyNumber={0}
+              totalPeopleNumber={4}
+              latitude={10}
+              longitude={20}
+            />
           </ListGroup>
 
           <InfiniteScroll
@@ -160,6 +168,8 @@ export default function Resgates() {
                         childrenNumber={item.childrenNumber}
                         elderlyNumber={item.elderlyNumber}
                         totalPeopleNumber={item.totalPeopleNumber}
+                        latitude={item.latitude}
+                        longitude={item.longitude}
                       />
                     );
                   })}
