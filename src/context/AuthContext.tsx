@@ -1,4 +1,10 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type AuthContextProps = {
   token: string | undefined;
@@ -58,7 +64,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
     let intervalLocation = setInterval(() => {
       handleLocation();
-    });
+    }, 1000 * 60);
 
     const auth = getAuthFromStorage();
     setToken(auth.token);
