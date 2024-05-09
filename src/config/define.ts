@@ -63,6 +63,11 @@ export function formatarDistancia(distancia: number) {
   if (distancia >= 1000) {
     return (distancia / 1000).toFixed(2) + " km";
   } else {
-    return distancia + " m";
+    return distancia.toFixed(0) + " m";
   }
 }
+
+export type Position = {
+  lat: number;
+  lng: number;
+};

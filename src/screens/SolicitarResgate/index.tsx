@@ -5,14 +5,14 @@ import { mdiChevronLeft, mdiMinus, mdiPlus } from "@mdi/js";
 
 import Layout from "../../components/Layout";
 import { Link, useNavigate } from "react-router-dom";
-import { OutputFormat, RequestType, geocode } from "react-geocode";
-import { APIRequestRequest, APIResponse } from "../../config/define";
+import { APIRequestRequest, APIResponse, Position } from "../../config/define";
 import { useAuth } from "../../context/AuthContext";
 import { useApi } from "../../hooks/api";
+import { LocationInput } from "../../components/LocationInput";
 
 export default function SolicitarResgate() {
   const navigate = useNavigate();
-  const { token, latitude, longitude } = useAuth();
+  const { token, position: userPosition } = useAuth();
   const { post } = useApi();
 
   const [totalPeopleNumber, setTotalPeopleNumber] = useState<number>(0);
@@ -20,15 +20,14 @@ export default function SolicitarResgate() {
   const [elderlyNumber, setElderlyNumber] = useState<number>(0);
   const [disabledNumber, setDisabledNumber] = useState<number>(0);
   const [animalsNumber, setAnimalsNumber] = useState<number>(0);
-  const [address, setAddress] = useState<string>("");
-  const [utilizarLocalizacao, setUtilizarLocalizacao] = useState(false);
+  const [position, setPosition] = useState<Position | null>(null);
 
   const [error, setError] = useState("");
 
   async function handleSolicitarResgate() {
-    let location;
-    if (!utilizarLocalizacao) {
-      location = await handleLatLong();
+    if (!position) {
+      setError("Informe a localização");
+      return;
     }
 
     const data: APIRequestRequest = {
@@ -37,8 +36,8 @@ export default function SolicitarResgate() {
       elderlyNumber: elderlyNumber,
       disabledNumber: disabledNumber,
       animalsNumber: animalsNumber,
-      latitude: utilizarLocalizacao ? latitude : location.lat,
-      longitude: utilizarLocalizacao ? longitude : location.lng,
+      latitude: position?.lat ?? 0,
+      longitude: position?.lng ?? 0,
     };
 
     const resp = await post<APIRequestRequest, APIResponse>(
@@ -56,14 +55,6 @@ export default function SolicitarResgate() {
     } else {
       setError("Ocorreu algum problema, tente novamente");
     }
-  }
-
-  async function handleLatLong() {
-    let resp = await geocode(RequestType.ADDRESS, address, {
-      key: import.meta.env.VITE_MAPS_API,
-      outputFormat: OutputFormat.JSON,
-    });
-    return (location = resp.results[0].geometry.location);
   }
 
   function handleVoltar() {
@@ -241,29 +232,9 @@ export default function SolicitarResgate() {
           </InputGroup>
         </Form.Group>
 
-        <Form.Group className="mb-3 ">
-          <Form.Label>Endereço Completo</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Informe aqui o Endereço Completo"
-            size="lg"
-            className=""
-            value={address}
-            onChange={(e) => {
-              setAddress(e.currentTarget.value);
-            }}
-            disabled={utilizarLocalizacao}
-          />
-        </Form.Group>
-
-        <Form.Check
-          type="switch"
-          label="Utilizar minha localização atual"
-          id="utilizar"
-          className="mb-3 form-switch-md"
-          onChange={(e) => {
-            setUtilizarLocalizacao(e.currentTarget.checked);
-          }}
+        <LocationInput
+          currentUserPosition={userPosition}
+          onChange={setPosition}
         />
 
         {error != "" && <Alert variant="danger">{error}</Alert>}

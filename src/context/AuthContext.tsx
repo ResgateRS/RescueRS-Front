@@ -5,14 +5,14 @@ import {
   useEffect,
   useState,
 } from "react";
+import { Position } from "../config/define";
 
 type AuthContextProps = {
   token: string | undefined;
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
   rescuer: boolean | undefined;
   setRescuer: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  latitude: number | undefined;
-  longitude: number | undefined;
+  position: Position | null;
   setAuth: (token?: string, rescuer?: boolean) => void;
 };
 
@@ -40,8 +40,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState<string>();
   const [rescuer, setRescuer] = useState<boolean>();
-  const [latitude, setLatitude] = useState<number>();
-  const [longitude, setLongitude] = useState<number>();
+  const [position, setPosition] = useState<Position | null>(null);
 
   const setAuth = (token?: string, rescuer?: boolean) => {
     setToken(token);
@@ -51,18 +50,17 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     function handleLocation() {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const long = position.coords.longitude;
-
-        setLatitude(lat);
-        setLongitude(long);
+      navigator.geolocation.getCurrentPosition((newPosition) => {
+        const lat = newPosition.coords.latitude;
+        const lng = newPosition.coords.longitude;
+        if (position?.lat === lat && position?.lng === lng) return;
+        setPosition({ lat, lng });
       });
     }
 
     handleLocation();
 
-    let intervalLocation = setInterval(() => {
+    const intervalLocation = setInterval(() => {
       handleLocation();
     }, 1000 * 60);
 
@@ -83,8 +81,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     setToken,
     rescuer,
     setRescuer,
-    latitude,
-    longitude,
+    position,
     setAuth,
   };
 

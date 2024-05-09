@@ -10,9 +10,12 @@ import InfiniteScroll from "../../components/InfiniteScroll";
 import { useApi } from "../../hooks/api";
 
 export default function Resgates() {
-  const { latitude, longitude, token } = useAuth();
+  const { position, token } = useAuth();
   const [proximity, setProximity] = useState(false);
   const { get } = useApi();
+
+  const latitude = position?.lat;
+  const longitude = position?.lng;
 
   async function fetchDataPending(page?: string) {
     let url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues`;
@@ -23,12 +26,10 @@ export default function Resgates() {
     }
     return await get<APIResponseListPendingRescues>(url, {
       search:
-        proximity &&
-        typeof latitude === "number" &&
-        typeof longitude === "number"
+        proximity && position
           ? new URLSearchParams({
-              latitude: latitude.toString(),
-              longitude: longitude.toString(),
+              latitude: position.lat.toString(),
+              longitude: position.lng.toString(),
             })
           : undefined,
       headers: page
@@ -48,10 +49,14 @@ export default function Resgates() {
 
   async function fetchDataCompleted(page?: string) {
     return await get<APIResponseListPendingRescues>(
-      `${
-        import.meta.env.VITE_API_URL
-      }/Rescue/ListCompletedRescues?latitude=${latitude}&longitude=${longitude}`,
+      `${import.meta.env.VITE_API_URL}/Rescue/ListCompletedRescues`,
       {
+        search: position
+          ? new URLSearchParams({
+              latitude: position.lat.toString(),
+              longitude: position.lng.toString(),
+            })
+          : undefined,
         headers: page
           ? {
               "X-Cursor": page.toString(),
@@ -98,6 +103,8 @@ export default function Resgates() {
               setProximity(e.currentTarget.value === "true");
             }}
             style={{ width: "auto" }}
+            disabled={!position}
+            value={proximity && position ? "true" : "false"}
           >
             <option value={"false"}>Tempo</option>
             <option value={"true"}>Proximidade</option>

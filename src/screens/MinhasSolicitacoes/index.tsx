@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, Button, ListGroup } from "react-bootstrap";
 import Layout from "../../components/Layout";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -13,7 +13,7 @@ export default function MinhasSolicitacoes() {
   const { token } = useAuth();
   const { get } = useApi();
 
-  const query = useInfiniteQuery<APIResponseListMyRescues>({
+  const { isFetched, data } = useInfiniteQuery<APIResponseListMyRescues>({
     queryKey: ["ListMyRescues"],
     queryFn: ({ pageParam }) => fetchData(pageParam as string),
     initialPageParam: undefined,
@@ -22,6 +22,12 @@ export default function MinhasSolicitacoes() {
         ? lastPage.Data[lastPage.Data.length - 1].rescueId
         : null,
   });
+
+  useEffect(() => {
+    if (isFetched && data?.pages[0].Data?.length === 0) {
+      navigate("/solicitarResgate");
+    }
+  }, [isFetched, data, navigate]);
 
   async function fetchData(page?: string) {
     return await get<APIResponseListMyRescues>(
@@ -57,12 +63,12 @@ export default function MinhasSolicitacoes() {
         Solicitar Resgate
       </Button>
 
-      {query.isFetched && query.data?.pages[0].Data?.length === 0 && (
+      {isFetched && data?.pages[0].Data?.length === 0 && (
         <Alert variant="light">Nenhum registro encontrado</Alert>
       )}
 
       <ListGroup className="w-100">
-        {query.data?.pages.map((page, key) => {
+        {data?.pages.map((page, key) => {
           return (
             <React.Fragment key={key}>
               {page.Data?.map((item, itemKey) => {
