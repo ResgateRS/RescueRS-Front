@@ -92,7 +92,7 @@ export default function RestageItem(props: RestageItemProps) {
         <Row>
           <Col className="d-flex flex-column justify-content-center align-items-center">
             <div className="fw-bold fs-1">{props.adultsNumber}</div>
-            <div className="text-muted">Pessoas</div>
+            <div className="text-muted">Adultos</div>
           </Col>
           {props.childrenNumber > 0 && (
             <Col className="d-flex flex-column justify-content-center align-items-center">
