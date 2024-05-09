@@ -46,6 +46,7 @@ export type APIResponseListPendingRescues = APIResponse<
 >;
 
 export type APIRequestRequest = {
+  contactPhone: string;
   adultsNumber: number;
   childrenNumber: number;
   elderlyNumber: number;

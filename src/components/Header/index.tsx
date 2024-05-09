@@ -6,16 +6,16 @@ import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { token, setAuth } = useAuth();
+  const { token, cellphone, setAuth } = useAuth();
 
   function handleSair() {
-    setAuth(undefined, undefined);
+    setAuth(undefined, undefined, undefined);
     navigate("/");
   }
 
   return (
     <Row className="d-flex flex-row align-items-center justify-content-between my-4">
-      <Col xs={3}></Col>
+      <Col xs={3}>{cellphone}</Col>
       <Col
         xs={6}
         className="d-flex flex-row align-items-center justify-content-center"
