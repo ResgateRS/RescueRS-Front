@@ -62,7 +62,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
     const intervalLocation = setInterval(() => {
       handleLocation();
-    }, 1000 * 60);
+    }, 5000);
 
     const auth = getAuthFromStorage();
     setToken(auth.token);

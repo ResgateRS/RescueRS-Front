@@ -1,0 +1,18 @@
+{
+  "id": "resgaters",
+  "display": "standalone",
+  "name": "Resgate RS",
+  "short_name": "Resgate RS",
+  "description": "Resgate RS",
+  "start_url": "https://resgaters.app.br/",
+  "prefer_related_applications": false,
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "icons": [
+    {
+      "src": "https://resgaters.app.br/logo.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}

@@ -21,7 +21,7 @@ export default function Header() {
         className="d-flex flex-row align-items-center justify-content-center"
       >
         <Icon path={mdiHandHeartOutline} size={1.5} className="me-3" />
-        <h2 className="my-0">Rescue RS</h2>
+        <h2 className="my-0">Resgate RS</h2>
       </Col>
       <Col xs={3} className="d-flex  justify-content-end ">
         {token && (
