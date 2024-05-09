@@ -9,12 +9,14 @@ import { APIRequestRequest, APIResponse, Position } from "../../config/define";
 import { useAuth } from "../../context/AuthContext";
 import { useApi } from "../../hooks/api";
 import { LocationInput } from "../../components/LocationInput";
+import { PhoneNumberFormControl } from "../../components/PhoneNumberFormControl";
 
 export default function SolicitarResgate() {
   const navigate = useNavigate();
-  const { token, position: userPosition } = useAuth();
+  const { cellphone, token, position: userPosition } = useAuth();
   const { post } = useApi();
 
+  const [contactPhone, setContactPhone] = useState<string>(cellphone || "");
   const [adultsNumber, setAdultsNumber] = useState<number>(0);
   const [childrenNumber, setChildrenNumber] = useState<number>(0);
   const [elderlyNumber, setElderlyNumber] = useState<number>(0);
@@ -31,6 +33,7 @@ export default function SolicitarResgate() {
     }
 
     const data: APIRequestRequest = {
+      contactPhone: contactPhone,
       adultsNumber: adultsNumber,
       childrenNumber: childrenNumber,
       elderlyNumber: elderlyNumber,
@@ -72,6 +75,16 @@ export default function SolicitarResgate() {
       </Link>
 
       <Form className="w-100">
+        <Form.Group className="mb-3 ">
+          <Form.Label>Telefone para Contato</Form.Label>
+          <PhoneNumberFormControl
+            value={contactPhone}
+            onChange={(value) => {
+              setContactPhone(value || "");
+            }}
+          />
+        </Form.Group>
+
         <Form.Group className="mb-3 ">
           <Form.Label>Número de adultos</Form.Label>
           <InputGroup>

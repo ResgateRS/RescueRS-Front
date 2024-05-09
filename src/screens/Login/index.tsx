@@ -52,9 +52,11 @@ export default function Login() {
   }
 
   async function handleSolicitarResgate() {
+    const parsedPhoneNumber = parsePhoneNumber(phoneNumber!, "BR");
+    const cellphone = parsedPhoneNumber!.nationalNumber;
     const resp = await handleLogin(false);
     if (resp.status && resp.body.Result === 1) {
-      setAuth(resp.body.Data?.token, false);
+      setAuth(resp.body.Data?.token, false, cellphone);
       navigate("minhasSolicitacoes");
     } else {
       setApiError(
@@ -64,9 +66,11 @@ export default function Login() {
   }
 
   async function handleEstouResgatando() {
+    const parsedPhoneNumber = parsePhoneNumber(phoneNumber!, "BR");
+    const cellphone = parsedPhoneNumber!.nationalNumber;
     const resp = await handleLogin(true);
     if (resp.status) {
-      setAuth(resp.body.Data?.token, true);
+      setAuth(resp.body.Data?.token, true, cellphone);
       navigate("resgates");
     } else {
       setApiError("Ocorreu algum problema, tente novamente");

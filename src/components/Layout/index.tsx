@@ -62,8 +62,12 @@ export default function Layout({ children }: any) {
         </div>
       )}
       <Header />
-      <div className="bg-white flex-fill shadow-sm rounded-top-4 p-4">
+      <div className="bg-white flex-fill shadow-sm rounded-4 p-4">
         {children}
+      </div>
+      <div className="d-flex justify-content-center gap-1 p-2">
+        Entre em contato
+        <a href="mailto:contato@resgaters.app.br">contato@resgaters.app.br</a>
       </div>
 
       <Modal

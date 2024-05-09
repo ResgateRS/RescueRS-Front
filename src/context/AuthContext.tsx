@@ -8,12 +8,13 @@ import {
 import { Position } from "../config/define";
 
 type AuthContextProps = {
+  cellphone: string | undefined;
   token: string | undefined;
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
   rescuer: boolean | undefined;
   setRescuer: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   position: Position | null;
-  setAuth: (token?: string, rescuer?: boolean) => void;
+  setAuth: (token?: string, rescuer?: boolean, cellphone?: string) => void;
 };
 
 type AuthProviderProps = {
@@ -26,26 +27,34 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-const saveAuthToStorage = (token?: string, rescuer?: boolean) => {
-  const auth = { token, rescuer };
+const saveAuthToStorage = (
+  token?: string,
+  rescuer?: boolean,
+  cellphone?: string,
+) => {
+  const auth = { token, rescuer, cellphone };
   localStorage.setItem("auth", JSON.stringify(auth));
 };
 
 const getAuthFromStorage = () => {
   const auth = localStorage.getItem("auth");
-  return auth ? JSON.parse(auth) : { token: undefined, rescuer: undefined };
+  return auth
+    ? JSON.parse(auth)
+    : { token: undefined, rescuer: undefined, cellphone: undefined };
 };
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
+  const [cellphone, setCellphone] = useState<string>();
   const [token, setToken] = useState<string>();
   const [rescuer, setRescuer] = useState<boolean>();
   const [position, setPosition] = useState<Position | null>(null);
 
-  const setAuth = (token?: string, rescuer?: boolean) => {
+  const setAuth = (token?: string, rescuer?: boolean, cellphone?: string) => {
     setToken(token);
     setRescuer(!!rescuer);
-    saveAuthToStorage(token, rescuer);
+    setCellphone(cellphone);
+    saveAuthToStorage(token, rescuer, cellphone);
   };
 
   useEffect(() => {
@@ -67,6 +76,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const auth = getAuthFromStorage();
     setToken(auth.token);
     setRescuer(auth.rescuer);
+    setCellphone(auth.cellphone);
     setLoading(false);
 
     return () => {
@@ -77,6 +87,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   if (loading) return null;
 
   const value = {
+    cellphone,
     token,
     setToken,
     rescuer,
