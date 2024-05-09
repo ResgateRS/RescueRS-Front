@@ -25,13 +25,12 @@ export default function Resgates() {
       }/Rescue/ListPendingRescuesByProximity`;
     }
     return await get<APIResponseListPendingRescues>(url, {
-      search:
-        proximity && position
-          ? new URLSearchParams({
-              latitude: position.lat.toString(),
-              longitude: position.lng.toString(),
-            })
-          : undefined,
+      search: position
+        ? new URLSearchParams({
+            latitude: position.lat.toString(),
+            longitude: position.lng.toString(),
+          })
+        : undefined,
       headers: page
         ? {
             "X-Cursor": page.toString(),
