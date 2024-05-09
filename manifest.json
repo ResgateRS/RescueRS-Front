@@ -10,7 +10,7 @@
   "theme_color": "#fff",
   "icons": [
     {
-      "src": "https://resgaters.app.br/logo.png",
+      "src": "https://resgaters.app.br/public/logo.png",
       "sizes": "any",
       "type": "image/png"
     }
