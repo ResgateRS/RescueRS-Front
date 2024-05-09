@@ -15,7 +15,7 @@ export default function SolicitarResgate() {
   const { token, position: userPosition } = useAuth();
   const { post } = useApi();
 
-  const [totalPeopleNumber, setTotalPeopleNumber] = useState<number>(0);
+  const [adultsNumber, setAdultsNumber] = useState<number>(0);
   const [childrenNumber, setChildrenNumber] = useState<number>(0);
   const [elderlyNumber, setElderlyNumber] = useState<number>(0);
   const [disabledNumber, setDisabledNumber] = useState<number>(0);
@@ -31,7 +31,7 @@ export default function SolicitarResgate() {
     }
 
     const data: APIRequestRequest = {
-      totalPeopleNumber: totalPeopleNumber,
+      adultsNumber: adultsNumber,
       childrenNumber: childrenNumber,
       elderlyNumber: elderlyNumber,
       disabledNumber: disabledNumber,
@@ -73,23 +73,23 @@ export default function SolicitarResgate() {
 
       <Form className="w-100">
         <Form.Group className="mb-3 ">
-          <Form.Label>Número de pessoas</Form.Label>
+          <Form.Label>Número de adultos</Form.Label>
           <InputGroup>
             <Form.Control
               type="number"
               min={0}
-              placeholder="Informe aqui o número de pessoas"
+              placeholder="Informe aqui o número de adultos"
               size="lg"
               className=""
-              value={totalPeopleNumber}
+              value={adultsNumber}
               onChange={(e) => {
-                setTotalPeopleNumber(Number(e.currentTarget.value));
+                setAdultsNumber(Number(e.currentTarget.value));
               }}
             />
             <Button
               variant="danger"
               onClick={() => {
-                setTotalPeopleNumber((p) => (p == 0 ? 0 : p - 1));
+                setAdultsNumber((p) => (p == 0 ? 0 : p - 1));
               }}
             >
               <Icon path={mdiMinus} size={1} />
@@ -97,7 +97,7 @@ export default function SolicitarResgate() {
             <Button
               variant="primary"
               onClick={() => {
-                setTotalPeopleNumber((p) => p + 1);
+                setAdultsNumber((p) => p + 1);
               }}
             >
               <Icon path={mdiPlus} size={1} />
