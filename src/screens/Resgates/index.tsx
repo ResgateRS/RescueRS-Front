@@ -11,7 +11,7 @@ import { useApi } from "../../hooks/api";
 
 export default function Resgates() {
   const { position, token } = useAuth();
-  const [proximity, setProximity] = useState(false);
+  const [proximity, setProximity] = useState(true);
   const { get } = useApi();
 
   const latitude = position?.lat;
