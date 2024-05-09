@@ -43,6 +43,7 @@ export default function RestageItem(props: RestageItemProps) {
   const { post } = useApi();
 
   const [loading, setLoading] = useState(false);
+  const [removed, setRemoved] = useState(false);
 
   async function handleConfirm() {
     setLoading(true);
@@ -71,11 +72,14 @@ export default function RestageItem(props: RestageItemProps) {
         queryKey: ["ListCompletedRescues"],
       });
       queryClient.resetQueries();
+      setRemoved(true);
     } else {
       alert(resp.Message ?? "Ocorreu algum problema, tente novamente");
     }
     setLoading(false);
   }
+
+  if (removed) return null;
 
   return (
     <ListGroup.Item>
