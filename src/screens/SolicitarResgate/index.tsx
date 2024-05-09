@@ -53,7 +53,7 @@ export default function SolicitarResgate() {
     if (resp.Result === 1) {
       handleVoltar();
     } else {
-      setError("Ocorreu algum problema, tente novamente");
+      setError(resp.Message ?? "Ocorreu algum problema, tente novamente");
     }
   }
 
@@ -77,6 +77,7 @@ export default function SolicitarResgate() {
           <InputGroup>
             <Form.Control
               type="number"
+              min={0}
               placeholder="Informe aqui o número de pessoas"
               size="lg"
               className=""
@@ -109,6 +110,7 @@ export default function SolicitarResgate() {
           <InputGroup>
             <Form.Control
               type="number"
+              min={0}
               placeholder="Informe aqui o número de crianças"
               size="lg"
               className=""
@@ -141,6 +143,7 @@ export default function SolicitarResgate() {
           <InputGroup>
             <Form.Control
               type="number"
+              min={0}
               placeholder="Informe aqui o número de idosos"
               size="lg"
               className=""
@@ -173,6 +176,7 @@ export default function SolicitarResgate() {
           <InputGroup>
             <Form.Control
               type="number"
+              min={0}
               placeholder="Informe aqui o número de pessoas com deficiência"
               size="lg"
               className=""
@@ -205,6 +209,7 @@ export default function SolicitarResgate() {
           <InputGroup>
             <Form.Control
               type="number"
+              min={0}
               placeholder="Informe aqui o número de Animais"
               size="lg"
               className=""

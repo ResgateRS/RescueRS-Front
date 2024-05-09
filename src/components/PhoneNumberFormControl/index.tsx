@@ -23,6 +23,7 @@ export function PhoneNumberFormControl({ value, onChange }: Props) {
       }}
       value={(value as any) ?? ""}
       onChange={(e) => onChange?.(e)}
+      autoComplete="tel"
     />
   );
 }
