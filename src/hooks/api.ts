@@ -10,7 +10,7 @@ type useApiType = {
   post: <P = unknown, R = unknown>(
     url: string,
     body: P,
-    options?: RequestOptions
+    options?: RequestOptions,
   ) => Promise<R>;
 };
 
@@ -22,7 +22,7 @@ export const useApi = () => {
   const get: useApiType["get"] = async (url, options = {}) => {
     const search = options.search?.toString();
 
-    const response = await fetch(`${url}?${search}`, {
+    const response = await fetch(`${url}?${search || ""}`, {
       headers: {
         ...options.headers,
         ...authHeaders,
