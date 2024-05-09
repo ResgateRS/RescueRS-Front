@@ -80,7 +80,7 @@ export default function MinhasSolicitacoes() {
                     animalsNumber={item.animalsNumber}
                     childrenNumber={item.childrenNumber}
                     elderlyNumber={item.elderlyNumber}
-                    totalPeopleNumber={item.totalPeopleNumber}
+                    adultsNumber={item.adultsNumber}
                     disabledNumber={item.disabledNumber}
                     rescued={item.rescued}
                   />

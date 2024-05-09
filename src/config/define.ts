@@ -16,7 +16,7 @@ export type APIResponseLogin = APIResponse<LoginResponseType>;
 export type ListMyRescuesType = {
   rescueId: string;
   requestDateTime: string;
-  totalPeopleNumber: number;
+  adultsNumber: number;
   childrenNumber: number;
   elderlyNumber: number;
   disabledNumber: number;
@@ -29,7 +29,7 @@ export type APIResponseListMyRescues = APIResponse<ListMyRescuesType[]>;
 export type ListPendingRescuesType = {
   rescueId: string;
   requestDateTime: string;
-  totalPeopleNumber: number;
+  adultsNumber: number;
   childrenNumber: number;
   elderlyNumber: number;
   disabledNumber: number;
@@ -46,7 +46,7 @@ export type APIResponseListPendingRescues = APIResponse<
 >;
 
 export type APIRequestRequest = {
-  totalPeopleNumber: number;
+  adultsNumber: number;
   childrenNumber: number;
   elderlyNumber: number;
   disabledNumber: number;

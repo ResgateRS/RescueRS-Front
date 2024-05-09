@@ -134,7 +134,7 @@ export default function Resgates() {
                         animalsNumber={item.animalsNumber}
                         childrenNumber={item.childrenNumber}
                         elderlyNumber={item.elderlyNumber}
-                        totalPeopleNumber={item.totalPeopleNumber}
+                        adultsNumber={item.adultsNumber}
                         disabledNumber={item.disabledNumber}
                         cellphone={item.cellphone}
                         latitude={item.latitude}
@@ -176,7 +176,7 @@ export default function Resgates() {
                         animalsNumber={item.animalsNumber}
                         childrenNumber={item.childrenNumber}
                         elderlyNumber={item.elderlyNumber}
-                        totalPeopleNumber={item.totalPeopleNumber}
+                        adultsNumber={item.adultsNumber}
                         disabledNumber={item.disabledNumber}
                         cellphone={item.cellphone}
                         latitude={item.latitude}

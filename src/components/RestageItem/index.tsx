@@ -23,7 +23,7 @@ import { useState } from "react";
 type RestageItemProps = {
   rescueId: string;
   requestDateTime: string;
-  totalPeopleNumber: number;
+  adultsNumber: number;
   childrenNumber: number;
   elderlyNumber: number;
   animalsNumber: number;
@@ -91,7 +91,7 @@ export default function RestageItem(props: RestageItemProps) {
         </Row>
         <Row>
           <Col className="d-flex flex-column justify-content-center align-items-center">
-            <div className="fw-bold fs-1">{props.totalPeopleNumber}</div>
+            <div className="fw-bold fs-1">{props.adultsNumber}</div>
             <div className="text-muted">Pessoas</div>
           </Col>
           {props.childrenNumber > 0 && (
