@@ -62,8 +62,15 @@ export default function RestageItem(props: RestageItemProps) {
     );
 
     if (resp.Result === 1) {
-      queryClient.invalidateQueries({ queryKey: ["ListPengingRescues"] });
-      queryClient.invalidateQueries({ queryKey: ["ListCompletedRescues"] });
+      queryClient.invalidateQueries({
+        refetchType: "all",
+        queryKey: ["ListPengingRescues"],
+      });
+      queryClient.invalidateQueries({
+        refetchType: "all",
+        queryKey: ["ListCompletedRescues"],
+      });
+      queryClient.resetQueries();
     } else {
       alert(resp.Message ?? "Ocorreu algum problema, tente novamente");
     }
