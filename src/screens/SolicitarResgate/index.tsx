@@ -10,6 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useApi } from "../../hooks/api";
 import { LocationInput } from "../../components/LocationInput";
 import { PhoneNumberFormControl } from "../../components/PhoneNumberFormControl";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 export default function SolicitarResgate() {
   const navigate = useNavigate();
@@ -32,8 +33,11 @@ export default function SolicitarResgate() {
       return;
     }
 
+    const parsedPhoneNumber = parsePhoneNumber(contactPhone!, "BR");
+    const cellphone = parsedPhoneNumber!.nationalNumber;
+
     const data: APIRequestRequest = {
-      contactPhone: contactPhone,
+      contactPhone: cellphone,
       adultsNumber: adultsNumber,
       childrenNumber: childrenNumber,
       elderlyNumber: elderlyNumber,
