@@ -11,8 +11,10 @@ import { useAsyncList } from "react-stately";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Map } from "../HereMaps/Map";
-import { Form } from "react-bootstrap";
+import { Form, Spinner } from "react-bootstrap";
 import { Position } from "../../config/define";
+import { mdiChevronDown } from "@mdi/js";
+import Icon from "@mdi/react";
 
 const apiUrl = `https://geocode.search.hereapi.com/v1/geocode?apiKey=${import.meta.env.VITE_HERE_API_KEY}&in=countryCode:BRA&lang=pt-BR&types=address&at=-30.001862,-51.310945&q=`;
 
@@ -94,19 +96,31 @@ export function LocationInput({
       shouldFocusWrap
       menuTrigger="input"
       formValue="key"
+      className="d-flex flex-column gap-2"
+      onFocus={(e) => {
+        setTimeout(() => {
+          console.log(e.target);
+          const top = e.target.getBoundingClientRect().top + window.scrollY;
+          console.log({ top });
+          window.scrollTo({ top: top - 45, behavior: "smooth" });
+        }, 100);
+      }}
     >
       <Label>Localização (Endereço)</Label>
       <div className="input-group">
         <Input className="form-control" />
         <Button className="btn btn-secondary" type="button">
-          ▼
+          {list.isLoading ? (
+            <Spinner animation="border" size="sm" />
+          ) : (
+            <Icon path={mdiChevronDown} size="16px" />
+          )}
         </Button>
       </div>
-      {/* <FieldError className="alert alert-danger">{errorMsg}</FieldError> */}
-      <Popover>
+      <Popover offset={2}>
         <ListBox<Location>
-          className="list-group"
-          style={{ width: "var(--trigger-width)" }}
+          className="list-group overflow-auto"
+          style={{ width: "var(--trigger-width)", maxHeight: "50svh" }}
         >
           {(item) => (
             <ListBoxItem
