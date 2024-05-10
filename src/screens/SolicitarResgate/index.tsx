@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Button, Form, Alert, InputGroup } from "react-bootstrap";
+import {
+  Button,
+  Form,
+  Alert,
+  InputGroup,
+  Toast,
+  ToastContainer,
+} from "react-bootstrap";
 import Icon from "@mdi/react";
 import { mdiChevronLeft, mdiMinus, mdiPlus } from "@mdi/js";
 
@@ -11,6 +18,9 @@ import { useApi } from "../../hooks/api";
 import { LocationInput } from "../../components/LocationInput";
 import { PhoneNumberFormControl } from "../../components/PhoneNumberFormControl";
 import { parsePhoneNumber } from "libphonenumber-js";
+import { QueryClient } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default function SolicitarResgate() {
   const navigate = useNavigate();
@@ -24,6 +34,9 @@ export default function SolicitarResgate() {
   const [disabledNumber, setDisabledNumber] = useState<number>(0);
   const [animalsNumber, setAnimalsNumber] = useState<number>(0);
   const [position, setPosition] = useState<Position | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(true);
+  const [message, setMessage] = useState("");
 
   const [error, setError] = useState("");
 
@@ -32,6 +45,7 @@ export default function SolicitarResgate() {
       setError("Informe a localização");
       return;
     }
+    setLoading(true);
 
     const parsedPhoneNumber = parsePhoneNumber(contactPhone!, "BR");
     const cellphone = parsedPhoneNumber!.nationalNumber;
@@ -58,9 +72,16 @@ export default function SolicitarResgate() {
       },
     );
     if (resp.Result === 1) {
-      handleVoltar();
+      queryClient.invalidateQueries({
+        refetchType: "all",
+        queryKey: ["ListMyRescues"],
+      });
+      queryClient.resetQueries();
+      setShow(true);
+      setMessage(resp.Message);
     } else {
       setError(resp.Message ?? "Ocorreu algum problema, tente novamente");
+      setLoading(false);
     }
   }
 
@@ -265,9 +286,28 @@ export default function SolicitarResgate() {
           className="mb-4 w-100 text-uppercase py-3 fw-medium"
           size="lg"
           onClick={handleSolicitarResgate}
+          disabled={loading}
         >
           Solicitar
         </Button>
+
+        <ToastContainer
+          className="p-3 position-fixed"
+          position={"bottom-center"}
+          style={{ zIndex: 10 }}
+        >
+          <Toast onClose={handleVoltar} show={show}>
+            <Toast.Header>
+              <strong className="me-auto">Solicitar Resgate</strong>
+            </Toast.Header>
+            <Toast.Body className="bg-white">
+              <div className="fs-5 mb-3 text-center">{message}</div>
+              <Button className="w-100" onClick={handleVoltar}>
+                Fechar
+              </Button>
+            </Toast.Body>
+          </Toast>
+        </ToastContainer>
       </Form>
     </Layout>
   );
