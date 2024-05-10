@@ -35,7 +35,7 @@ export default function SolicitarResgate() {
   const [animalsNumber, setAnimalsNumber] = useState<number>(0);
   const [position, setPosition] = useState<Position | null>(null);
   const [loading, setLoading] = useState(false);
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
 
   const [error, setError] = useState("");
