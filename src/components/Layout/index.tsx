@@ -23,9 +23,14 @@ export default function Layout({ children }: any) {
       return /iphone|ipad|ipod/.test(userAgent);
     };
 
+    const isWebView = () => {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      return userAgent.includes("webview");
+    };
+
     const isInStandaloneMode = () =>
       "standalone" in window.navigator && window.navigator.standalone;
-    if (isIos() && !isInStandaloneMode()) {
+    if (isIos() && !isInStandaloneMode() && !isWebView()) {
       setInstallIOS(true);
     }
 
@@ -49,7 +54,7 @@ export default function Layout({ children }: any) {
     <Container className="d-flex flex-column" style={{ minHeight: "100dvh" }}>
       {(install || installIOS) && (
         <div
-          className={`d-flex align-items-center justify-content-center px-3 py-2 gap-4`}
+          className={`d-flex align-items-center justify-content-center px-3 pt-2 gap-3`}
         >
           Baixe o aplicativo
           <Button
@@ -66,7 +71,6 @@ export default function Layout({ children }: any) {
       <div className="bg-white flex-fill shadow-sm rounded-4 p-4">
         {children}
       </div>
-
       <Footer />
       <Modal
         centered={true}
