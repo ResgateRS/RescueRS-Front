@@ -7,7 +7,7 @@ import {
   mdiMapMarker,
   mdiMapMarkerOutline,
 } from "@mdi/js";
-import { Badge, Button, Col, Row, Spinner } from "react-bootstrap";
+import { Badge, Button, Col, Modal, Row, Spinner } from "react-bootstrap";
 import moment from "moment";
 import "moment/dist/locale/pt-br";
 import { QueryClient } from "@tanstack/react-query";
@@ -43,10 +43,12 @@ export default function RestageItem(props: RestageItemProps) {
   const { post } = useApi();
 
   const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState(false);
   const [removed, setRemoved] = useState(false);
 
   async function handleConfirm() {
     setLoading(true);
+    setModal(false);
     const data: APIConfirmRequest = {
       rescueId: props.rescueId,
     };
@@ -165,7 +167,9 @@ export default function RestageItem(props: RestageItemProps) {
             variant="dark"
             size="lg"
             className="d-flex align-items-center justify-content-center flex-fill fw-medium"
-            onClick={handleConfirm}
+            onClick={() => {
+              setModal(true);
+            }}
             disabled={loading}
           >
             {loading ? (
@@ -187,6 +191,46 @@ export default function RestageItem(props: RestageItemProps) {
           </Badge>
         )}
       </div>
+
+      <Modal
+        centered={true}
+        show={modal}
+        onHide={() => {
+          setModal(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar o Resgate</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="fs-4 text-center">
+            Você está confirmando que o resgate foi realizado e não precisa mais
+            de ajuda.
+            <br />
+            Confirma essa ação?
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant={"primary"}
+            className="w-100"
+            onClick={() => {
+              handleConfirm();
+            }}
+          >
+            Confirmar
+          </Button>
+          <Button
+            variant={"dark"}
+            className="w-100"
+            onClick={() => {
+              setModal(false);
+            }}
+          >
+            Fechar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </ListGroup.Item>
   );
 }

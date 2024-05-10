@@ -17,6 +17,7 @@ export default function MinhasSolicitacoes() {
     queryKey: ["ListMyRescues"],
     queryFn: ({ pageParam }) => fetchData(pageParam as string),
     initialPageParam: undefined,
+    refetchInterval: 1000 * 60,
     getNextPageParam: (lastPage) =>
       lastPage.Data && lastPage.Data.length > 0
         ? lastPage.Data[lastPage.Data.length - 1].rescueId
