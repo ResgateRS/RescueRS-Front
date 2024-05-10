@@ -103,32 +103,34 @@ export default function RestageItem(props: RestageItemProps) {
           )}
         </Row>
         <Row>
-          <Col className="d-flex flex-column justify-content-center align-items-center">
-            <div className="fw-bold fs-1">{props.adultsNumber}</div>
-            <div className="text-muted">Adultos</div>
-          </Col>
+          {props.adultsNumber > 0 && (
+            <Col className="d-flex flex-column justify-content-center align-items-center">
+              <div className="fw-bold fs-1">{props.adultsNumber}</div>
+              <div className="fw-medium text-muted">Adultos</div>
+            </Col>
+          )}
           {props.childrenNumber > 0 && (
             <Col className="d-flex flex-column justify-content-center align-items-center">
-              <div className="fw-bold fs-4">{props.childrenNumber}</div>
-              <div className="text-muted">Crianças</div>
+              <div className="fw-bold fs-1">{props.childrenNumber}</div>
+              <div className="fw-medium text-muted">Crianças</div>
             </Col>
           )}
           {props.elderlyNumber > 0 && (
             <Col className="d-flex flex-column justify-content-center align-items-center">
-              <div className="fw-bold fs-4">{props.elderlyNumber}</div>
-              <div className="text-muted">Idosos</div>
+              <div className="fw-bold fs-1">{props.elderlyNumber}</div>
+              <div className="fw-medium text-muted">Idosos</div>
             </Col>
           )}
           {props.animalsNumber > 0 && (
             <Col className="d-flex flex-column justify-content-center align-items-center">
-              <div className="fw-bold fs-4">{props.animalsNumber}</div>
-              <div className="text-muted">Animais</div>
+              <div className="fw-bold fs-1">{props.animalsNumber}</div>
+              <div className="fw-medium text-muted">Animais</div>
             </Col>
           )}
           {props.disabledNumber > 0 && (
             <Col className="d-flex flex-column justify-content-center align-items-center">
-              <div className="fw-bold fs-4">{props.disabledNumber}</div>
-              <div className="text-muted">PCD</div>
+              <div className="fw-bold fs-1">{props.disabledNumber}</div>
+              <div className="fw-medium text-muted">PCD</div>
             </Col>
           )}
         </Row>
@@ -213,7 +215,7 @@ export default function RestageItem(props: RestageItemProps) {
         <Modal.Footer>
           <Button
             variant={"primary"}
-            className="w-100"
+            className="w00"
             onClick={() => {
               handleConfirm();
             }}
@@ -222,7 +224,7 @@ export default function RestageItem(props: RestageItemProps) {
           </Button>
           <Button
             variant={"dark"}
-            className="w-100"
+            className="w00"
             onClick={() => {
               setModal(false);
             }}

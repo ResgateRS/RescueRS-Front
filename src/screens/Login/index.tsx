@@ -79,11 +79,14 @@ export default function Login() {
 
   return (
     <Layout>
-      <h5 className="mb-4">Acesso ao sistema</h5>
+      <h5 className="mb-2">Acesso ao sistema</h5>
+      <p className="mb-4">
+        Utilize esta plataforma apenas para casos reais de emergência.
+      </p>
 
       <Form>
         <Form.Group className="mb-4">
-          <Form.Label>Celular</Form.Label>
+          <Form.Label className="fw-medium">Celular (Obrigatório)</Form.Label>
           <PhoneNumberFormControl
             value={phoneNumber}
             onChange={handlePhoneNumberChange}
@@ -91,13 +94,16 @@ export default function Login() {
         </Form.Group>
         {!!error && <Alert variant="danger">{error}</Alert>}
         <Button
-          className="mb-4 w-100 text-uppercase py-3 fw-medium"
+          className="mb-2 w-100 text-uppercase py-3 fw-medium"
           size="lg"
           onClick={handleSolicitarResgate}
           disabled={loading || !phoneNumber || !!phoneNumberError}
         >
-          {loading && <Spinner size="sm" className="me-2" />} Solicitar Resgate
+          {loading && <Spinner size="sm" className="me-2" />} Preciso de Resgate
         </Button>
+        Acesso as suas solicitações e ao processo de solicitação de resgate. A
+        solicitação só será enviada após confirmar os dados preenchidos no
+        formulário.
         <div className="d-flex align-items-center mb-4">
           <hr className="flex-fill me-2" />
           ou
@@ -105,13 +111,15 @@ export default function Login() {
         </div>
         <Button
           variant="dark"
-          className="mb-4 w-100 text-uppercase py-3 fw-medium"
+          className="mb-2 w-100 text-uppercase py-3 fw-medium"
           size="lg"
           onClick={handleEstouResgatando}
           disabled={loading || !phoneNumber || !!phoneNumberError}
         >
           {loading && <Spinner size="sm" className="me-2" />} Estou Resgatando
         </Button>
+        Acesso aos resgates solicitados pendentes e concluídos com acesso ao
+        mapa, celular e processo de concluir restages.
       </Form>
     </Layout>
   );
