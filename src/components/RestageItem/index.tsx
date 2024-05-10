@@ -177,7 +177,7 @@ export default function RestageItem(props: RestageItemProps) {
             ) : (
               <Icon path={mdiCheck} size={1} className="me-2" />
             )}
-            Confirmar
+            Concluir Resgate
           </Button>
         )}
         {props.rescued === false && (
