@@ -1,6 +1,6 @@
 import { mdiHandHeartOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
