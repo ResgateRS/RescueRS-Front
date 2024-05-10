@@ -13,22 +13,27 @@ export default function MinhasSolicitacoes() {
   const { token } = useAuth();
   const { get } = useApi();
 
-  const { isFetched, data } = useInfiniteQuery<APIResponseListMyRescues>({
-    queryKey: ["ListMyRescues"],
-    queryFn: ({ pageParam }) => fetchData(pageParam as string),
-    initialPageParam: undefined,
-    refetchInterval: 1000 * 60,
-    getNextPageParam: (lastPage) =>
-      lastPage.Data && lastPage.Data.length > 0
-        ? lastPage.Data[lastPage.Data.length - 1].rescueId
-        : null,
-  });
+  const { isFetched, isFetching, isFetchedAfterMount, data } =
+    useInfiniteQuery<APIResponseListMyRescues>({
+      queryKey: ["ListMyRescues"],
+      queryFn: ({ pageParam }) => fetchData(pageParam as string),
+      initialPageParam: undefined,
+      refetchInterval: 1000 * 60,
+      getNextPageParam: (lastPage) =>
+        lastPage.Data && lastPage.Data.length > 0
+          ? lastPage.Data[lastPage.Data.length - 1].rescueId
+          : null,
+    });
 
   useEffect(() => {
-    if (isFetched && data?.pages[0].Data?.length === 0) {
+    if (
+      !isFetching &&
+      isFetchedAfterMount &&
+      data?.pages[0].Data?.length === 0
+    ) {
       navigate("/solicitarResgate");
     }
-  }, [isFetched, data, navigate]);
+  }, [isFetching, isFetchedAfterMount, data, navigate]);
 
   async function fetchData(page?: string) {
     return await get<APIResponseListMyRescues>(
