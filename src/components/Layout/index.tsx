@@ -3,6 +3,7 @@ import Header from "../Header";
 import { useEffect, useState } from "react";
 import { mdiDownload, mdiExportVariant, mdiPlusBoxOutline } from "@mdi/js";
 import Icon from "@mdi/react";
+import { Footer } from "../Footer";
 
 export default function Layout({ children }: any) {
   const [install, setInstall] = useState(false);
@@ -65,11 +66,8 @@ export default function Layout({ children }: any) {
       <div className="bg-white flex-fill shadow-sm rounded-4 p-4">
         {children}
       </div>
-      <div className="d-flex justify-content-center gap-1 p-2">
-        Entre em contato
-        <a href="mailto:contato@resgaters.app.br">contato@resgaters.app.br</a>
-      </div>
 
+      <Footer />
       <Modal
         centered={true}
         show={installIOSModal}
