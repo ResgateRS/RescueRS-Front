@@ -76,6 +76,7 @@ export default function Resgates() {
     queryKey: ["ListPengingRescues", token, latitude, longitude, proximity],
     queryFn: ({ pageParam }) => fetchDataPending(pageParam as string),
     initialPageParam: undefined,
+    refetchInterval: 1000 * 60,
     getNextPageParam: (lastPage) =>
       lastPage.Data && lastPage.Data.length > 0
         ? lastPage.Data[lastPage.Data.length - 1].rescueId
@@ -85,6 +86,7 @@ export default function Resgates() {
     queryKey: ["ListCompletedRescues", token, latitude, longitude],
     queryFn: ({ pageParam }) => fetchDataCompleted(pageParam as string),
     initialPageParam: undefined,
+    refetchInterval: 1000 * 60,
     getNextPageParam: (lastPage) =>
       lastPage.Data && lastPage.Data?.length > 0
         ? lastPage.Data[lastPage.Data.length - 1].rescueId
