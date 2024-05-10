@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { APIResponseLogin } from "../config/define";
 import { useAuth } from "../context/AuthContext";
 
@@ -17,6 +18,7 @@ type useApiType = {
 
 export const useApi = () => {
   const { token, rescuer, cellphone, setAuth } = useAuth();
+  const navigate = useNavigate();
 
   const authHeaders = { Authorization: `Bearer ${token}` };
 
@@ -53,7 +55,7 @@ export const useApi = () => {
     if (responseJson.Result === 99) {
       let reLogin = await handleReLogin();
       if (reLogin) {
-        return await get(url, options);
+        return await post(url, body, options);
       }
     }
     return responseJson;
@@ -70,6 +72,7 @@ export const useApi = () => {
       setAuth(body.Data?.token, body.Data?.rescuer, cellphone);
       return true;
     } else {
+      navigate("/");
       return false;
     }
   }
