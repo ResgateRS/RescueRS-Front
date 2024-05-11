@@ -6,7 +6,7 @@ const SolicitarResgate = lazy(() => import("./screens/SolicitarResgate"));
 const MinhasSolicitacoes = lazy(() => import("./screens/MinhasSolicitacoes"));
 const Resgates = lazy(() => import("./screens/Resgates"));
 
-import AuthProvider from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Spinner } from "react-bootstrap";
 
