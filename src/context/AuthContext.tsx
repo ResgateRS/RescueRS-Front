@@ -69,9 +69,12 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
     handleLocation();
 
-    const intervalLocation = setInterval(() => {
-      handleLocation();
-    }, 5000);
+    const intervalLocation = setInterval(
+      () => {
+        handleLocation();
+      },
+      rescuer ? 1000 * 60 : 5000,
+    );
 
     const auth = getAuthFromStorage();
     setToken(auth.token);
@@ -82,7 +85,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       clearInterval(intervalLocation);
     };
-  }, []);
+  }, [rescuer]);
 
   if (loading) return null;
 
