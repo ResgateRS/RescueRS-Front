@@ -6,6 +6,7 @@ import {
   mdiClockOutline,
   mdiMapMarker,
   mdiMapMarkerOutline,
+  mdiWhatsapp,
 } from "@mdi/js";
 import { Badge, Button, Col, Modal, Row, Spinner } from "react-bootstrap";
 import moment from "moment";
@@ -135,63 +136,86 @@ export default function RestageItem(props: RestageItemProps) {
           )}
         </Row>
 
-        <div className="d-flex gap-2">
+        <Row>
           {props.latitude && props.longitude && (
-            <Button
-              as="a"
-              variant="primary"
-              target="_blank"
-              size="lg"
-              className="d-flex align-items-center justify-content-center flex-fill fw-medium"
-              href={`https://www.google.com/maps/place/${props.latitude},${props.longitude}`}
-              disabled={loading}
-            >
-              <Icon path={mdiMapMarker} size={1} className="me-2" /> Mapa
-            </Button>
+            <Col className="d-flex pb-2 pb-lg-0" xs={12} lg={6}>
+              <Button
+                as="a"
+                variant="primary"
+                target="_blank"
+                size="lg"
+                className="d-flex align-items-center justify-content-center flex-fill fw-medium"
+                href={`https://www.google.com/maps/place/${props.latitude},${props.longitude}`}
+                disabled={loading}
+              >
+                <Icon path={mdiMapMarker} size={1} className="me-2" /> Mapa
+              </Button>
+            </Col>
           )}
           {props.cellphone && (
-            <Button
-              as="a"
-              variant="primary"
-              target="_blank"
-              size="lg"
-              className="d-flex align-items-center justify-content-center flex-fill fw-medium"
-              href={`tel:${props.cellphone}`}
-              disabled={loading}
-            >
-              <Icon path={mdiCellphone} size={1} className="me-2" /> Celular
-            </Button>
+            <>
+              <Col className="d-flex" xs={6} lg={3}>
+                <Button
+                  as="a"
+                  variant="info"
+                  target="_blank"
+                  size="lg"
+                  className="d-flex align-items-center justify-content-center flex-fill fw-medium"
+                  href={`tel:${props.cellphone}`}
+                  disabled={loading}
+                >
+                  <Icon path={mdiCellphone} size={1} className="me-2" /> Celular
+                </Button>
+              </Col>
+              <Col className="d-flex" xs={6} lg={3}>
+                <Button
+                  as="a"
+                  variant="success"
+                  target="_blank"
+                  size="lg"
+                  className="d-flex align-items-center justify-content-center flex-fill fw-medium"
+                  href={`https://wa.me/55${props.cellphone}`}
+                  disabled={loading}
+                >
+                  <Icon path={mdiWhatsapp} size={1} className="me-2" /> Whats
+                </Button>
+              </Col>
+            </>
           )}
-        </div>
-        {props.confirm && (
-          <Button
-            as="button"
-            variant="dark"
-            size="lg"
-            className="d-flex align-items-center justify-content-center flex-fill fw-medium"
-            onClick={() => {
-              setModal(true);
-            }}
-            disabled={loading}
-          >
-            {loading ? (
-              <Spinner size="sm" className="me-2" />
-            ) : (
-              <Icon path={mdiCheck} size={1} className="me-2" />
-            )}
-            Concluir Resgate
-          </Button>
-        )}
-        {props.rescued === false && (
-          <Badge bg={"warning"} className="fs-6">
-            Pendente
-          </Badge>
-        )}
-        {props.rescued === true && (
-          <Badge bg={"success"} className="fs-6">
-            Realizado
-          </Badge>
-        )}
+        </Row>
+        <Row>
+          {props.confirm && (
+            <Col className="d-flex gap-2">
+              <Button
+                as="button"
+                variant="dark"
+                size="lg"
+                className="d-flex align-items-center justify-content-center flex-fill fw-medium"
+                onClick={() => {
+                  setModal(true);
+                }}
+                disabled={loading}
+              >
+                {loading ? (
+                  <Spinner size="sm" className="me-2" />
+                ) : (
+                  <Icon path={mdiCheck} size={1} className="me-2" />
+                )}
+                Concluir Resgate
+              </Button>
+            </Col>
+          )}
+          {props.rescued === false && (
+            <Badge bg={"warning"} className="fs-6">
+              Pendente
+            </Badge>
+          )}
+          {props.rescued === true && (
+            <Badge bg={"success"} className="fs-6">
+              Realizado
+            </Badge>
+          )}
+        </Row>
       </div>
 
       <Modal
