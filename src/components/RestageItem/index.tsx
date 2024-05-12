@@ -139,21 +139,20 @@ export default function RestageItem(props: RestageItemProps) {
               Solicitado{" "}
               {moment(props.requestDateTime).locale("pt-br").fromNow()}
             </div>
-            {props.distance && (
+            {props.status !== RescueStatus.Completed && position && (
               <div className="d-flex align-items-center justify-content-start">
                 <Icon path={mdiMapMarkerOutline} size={0.6} className="me-1" />
                 Distancia{` `}
-                {position &&
-                  formatarDistancia(
-                    haversine(
-                      { latitude: position.lat, longitude: position.lng },
-                      {
-                        latitude: props.latitude!,
-                        longitude: props.longitude!,
-                      },
-                      { unit: "meter" },
-                    ),
-                  )}
+                {formatarDistancia(
+                  haversine(
+                    { latitude: position.lat, longitude: position.lng },
+                    {
+                      latitude: props.latitude!,
+                      longitude: props.longitude!,
+                    },
+                    { unit: "meter" },
+                  ),
+                )}
               </div>
             )}
           </div>
