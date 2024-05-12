@@ -1,10 +1,4 @@
-import {
-  mdiEmail,
-  mdiGithub,
-  mdiInstagram,
-  mdiLogout,
-  mdiOpenInNew,
-} from "@mdi/js";
+import { mdiEmail, mdiGithub, mdiInstagram, mdiOpenInNew } from "@mdi/js";
 import Icon from "@mdi/react";
 
 export const Footer = () => {
