@@ -12,15 +12,17 @@ import { mdiChevronLeft, mdiMinus, mdiPlus } from "@mdi/js";
 
 import Layout from "../../components/Layout";
 import { Link, useNavigate } from "react-router-dom";
-import { APIRequestRequest, APIResponse, Position } from "../../config/define";
+import {
+  APIRequestRequest,
+  APIResponse,
+  Position,
+  queryClient,
+} from "../../config/define";
 import { useAuth } from "../../context/AuthContext";
 import { useApi } from "../../hooks/api";
 import { LocationInput } from "../../components/LocationInput";
 import { PhoneNumberFormControl } from "../../components/PhoneNumberFormControl";
 import { parsePhoneNumber } from "libphonenumber-js";
-import { QueryClient } from "@tanstack/react-query";
-
-const queryClient = new QueryClient();
 
 export default function SolicitarResgate() {
   const navigate = useNavigate();

@@ -52,9 +52,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
 
   useEffect(() => {
     async function handleLocation() {
-      console.log("updating location");
       const position = await getLocation();
-      console.log({ position });
       setPosition(position);
     }
 

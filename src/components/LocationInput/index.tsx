@@ -85,7 +85,6 @@ export function LocationInput({
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
       onSelectionChange={(key) => {
-        console.log({ key });
         const item = list.items.find((i) => i.id === key);
         if (item) {
           selectPosition(item.position);
@@ -99,9 +98,7 @@ export function LocationInput({
       className="d-flex flex-column gap-2"
       onFocus={(e) => {
         setTimeout(() => {
-          console.log(e.target);
           const top = e.target.getBoundingClientRect().top + window.scrollY;
-          console.log({ top });
           window.scrollTo({ top: top - 45, behavior: "smooth" });
         }, 100);
       }}

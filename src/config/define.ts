@@ -1,3 +1,5 @@
+import { QueryClient } from "@tanstack/react-query";
+
 export type APIResponse<T = unknown> = {
   Result: number;
   Message: string;
@@ -82,3 +84,5 @@ export type Position = {
   lat: number;
   lng: number;
 };
+
+export const queryClient = new QueryClient();

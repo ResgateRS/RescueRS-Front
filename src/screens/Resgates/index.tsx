@@ -23,7 +23,6 @@ const QueryResults: React.FC<QueryTabProps> = ({
   query,
   refreshData,
 }: QueryTabProps) => {
-  console.log({ query });
   return (
     <>
       {query.isFetched &&
@@ -33,7 +32,7 @@ const QueryResults: React.FC<QueryTabProps> = ({
             Nenhum registro encontrado
           </Alert>
         )}
-      <ListGroup className="w-100 border border-top-0 p-2 gap-4 rounded-top-0">
+      <ListGroup className="w-100 border-top-0 pt-3 gap-4">
         {query.data?.pages.map((page, key) => {
           return (
             <React.Fragment key={key}>
