@@ -1,31 +1,6 @@
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { Position } from "../config/define";
-
-type AuthContextProps = {
-  cellphone: string | undefined;
-  token: string | undefined;
-  setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
-  rescuer: boolean | undefined;
-  setRescuer: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  position: Position | null;
-  setAuth: (token?: string, rescuer?: boolean, cellphone?: string) => void;
-};
-
-type AuthProviderProps = {
-  children: ReactNode;
-};
-
-const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
+import { useEffect, useState } from "react";
+import { Position } from "../../config/define";
+import { AuthContext } from "./context";
 
 const saveAuthToStorage = (
   token?: string,
@@ -43,7 +18,25 @@ const getAuthFromStorage = () => {
     : { token: undefined, rescuer: undefined, cellphone: undefined };
 };
 
-export default function AuthProvider({ children }: AuthProviderProps) {
+const getLocation = (): Promise<Position | null> => {
+  let position: Position | null = null;
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      (newPosition) => {
+        const lat = newPosition.coords.latitude;
+        const lng = newPosition.coords.longitude;
+        position = { lat, lng };
+        resolve(position);
+      },
+      (error) => {
+        console.warn("Error getting location", error);
+        resolve(null);
+      },
+    );
+  });
+};
+
+export function AuthProvider({ children }: React.PropsWithChildren) {
   const [loading, setLoading] = useState(true);
   const [cellphone, setCellphone] = useState<string>();
   const [token, setToken] = useState<string>();
@@ -58,13 +51,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   };
 
   useEffect(() => {
-    function handleLocation() {
-      navigator.geolocation.getCurrentPosition((newPosition) => {
-        const lat = newPosition.coords.latitude;
-        const lng = newPosition.coords.longitude;
-        if (position?.lat === lat && position?.lng === lng) return;
-        setPosition({ lat, lng });
-      });
+    async function handleLocation() {
+      const position = await getLocation();
+      setPosition(position);
     }
 
     handleLocation();
@@ -73,19 +62,20 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       () => {
         handleLocation();
       },
-      rescuer ? 1000 * 60 : 5000,
+      rescuer ? 1000 * 30 : 1000 * 5,
     );
+    return () => {
+      clearInterval(intervalLocation);
+    };
+  }, [rescuer]);
 
+  useEffect(() => {
     const auth = getAuthFromStorage();
     setToken(auth.token);
     setRescuer(auth.rescuer);
     setCellphone(auth.cellphone);
     setLoading(false);
-
-    return () => {
-      clearInterval(intervalLocation);
-    };
-  }, [rescuer]);
+  }, []);
 
   if (loading) return null;
 

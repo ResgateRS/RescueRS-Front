@@ -1,21 +1,83 @@
-// import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  UseInfiniteQueryResult,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { Alert, Form, ListGroup, Tab, Tabs } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import RestageItem from "../../components/RestageItem";
 import { APIResponseListPendingRescues } from "../../config/define";
 import InfiniteScroll from "../../components/InfiniteScroll";
 import { useApi } from "../../hooks/api";
 
+type QueryTabProps = {
+  query: UseInfiniteQueryResult<
+    InfiniteData<APIResponseListPendingRescues, unknown>,
+    Error
+  >;
+  refreshData: () => void;
+};
+const QueryResults: React.FC<QueryTabProps> = ({
+  query,
+  refreshData,
+}: QueryTabProps) => {
+  return (
+    <>
+      {query.isFetched &&
+        (!query.data?.pages[0].Data ||
+          query.data?.pages[0].Data?.length === 0) && (
+          <Alert variant="light" className="mt-4 text-center">
+            Nenhum registro encontrado
+          </Alert>
+        )}
+      <ListGroup className="w-100 border-top-0 pt-3 gap-4">
+        {query.data?.pages.map((page, key) => {
+          return (
+            <React.Fragment key={key}>
+              {page.Data?.map((item) => {
+                return (
+                  <RestageItem
+                    key={item.rescueId}
+                    rescueId={item.rescueId}
+                    requestDateTime={item.requestDateTime}
+                    animalsNumber={item.animalsNumber}
+                    childrenNumber={item.childrenNumber}
+                    elderlyNumber={item.elderlyNumber}
+                    adultsNumber={item.adultsNumber}
+                    disabledNumber={item.disabledNumber}
+                    cellphone={item.cellphone}
+                    latitude={item.latitude}
+                    longitude={item.longitude}
+                    distance={item.distance}
+                    status={item.status}
+                    startedByMe={item.startedByMe}
+                    isRescuer
+                    refreshData={refreshData}
+                  />
+                );
+              })}
+            </React.Fragment>
+          );
+        })}
+      </ListGroup>
+
+      <InfiniteScroll
+        more={query.hasNextPage}
+        load={async () => {
+          await query.fetchNextPage();
+        }}
+        loading={query.isFetching || query.isFetchingNextPage}
+      />
+    </>
+  );
+};
+
 export default function Resgates() {
   const { position, token } = useAuth();
   const [proximity, setProximity] = useState(position ? true : false);
   const { get } = useApi();
-
-  const latitude = position?.lat;
-  const longitude = position?.lng;
 
   async function fetchDataPending(page?: string) {
     let url = `${import.meta.env.VITE_API_URL}/Rescue/ListPendingRescues`;
@@ -42,13 +104,9 @@ export default function Resgates() {
     });
   }
 
-  async function fetchDataPendingNextPage() {
-    queryPending.fetchNextPage();
-  }
-
-  async function fetchDataCompleted(page?: string) {
+  async function fetchDataMy(page?: string) {
     return await get<APIResponseListPendingRescues>(
-      `${import.meta.env.VITE_API_URL}/Rescue/ListCompletedRescues`,
+      `${import.meta.env.VITE_API_URL}/Rescue/ListMyRescues`,
       {
         search: position
           ? new URLSearchParams({
@@ -68,12 +126,30 @@ export default function Resgates() {
     );
   }
 
-  async function fetchDataCompletedNextPage() {
-    queryCompleted.fetchNextPage();
+  async function fetchDataStarted(page?: string) {
+    return await get<APIResponseListPendingRescues>(
+      `${import.meta.env.VITE_API_URL}/Rescue/ListInProgressRescues`,
+      {
+        search: position
+          ? new URLSearchParams({
+              latitude: position.lat.toString(),
+              longitude: position.lng.toString(),
+            })
+          : undefined,
+        headers: page
+          ? {
+              "X-Cursor": page.toString(),
+              "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
+            }
+          : {
+              "X-PageSize": import.meta.env.VITE_PAGE_SIZE,
+            },
+      },
+    );
   }
 
   const queryPending = useInfiniteQuery<APIResponseListPendingRescues>({
-    queryKey: ["ListPengingRescues", token, latitude, longitude, proximity],
+    queryKey: ["ListPengingRescues", token, proximity],
     queryFn: ({ pageParam }) => fetchDataPending(pageParam as string),
     initialPageParam: undefined,
     refetchInterval: 1000 * 60,
@@ -82,9 +158,19 @@ export default function Resgates() {
         ? lastPage.Data[lastPage.Data.length - 1].rescueId
         : null,
   });
-  const queryCompleted = useInfiniteQuery<APIResponseListPendingRescues>({
-    queryKey: ["ListCompletedRescues", token, latitude, longitude],
-    queryFn: ({ pageParam }) => fetchDataCompleted(pageParam as string),
+  const queryMy = useInfiniteQuery<APIResponseListPendingRescues>({
+    queryKey: ["ListMyRescues", token, proximity],
+    queryFn: ({ pageParam }) => fetchDataMy(pageParam as string),
+    initialPageParam: undefined,
+    refetchInterval: 1000 * 60,
+    getNextPageParam: (lastPage) =>
+      lastPage.Data && lastPage.Data.length > 0
+        ? lastPage.Data[lastPage.Data.length - 1].rescueId
+        : null,
+  });
+  const queryStarted = useInfiniteQuery<APIResponseListPendingRescues>({
+    queryKey: ["ListStartedRescues", token],
+    queryFn: ({ pageParam }) => fetchDataStarted(pageParam as string),
     initialPageParam: undefined,
     refetchInterval: 1000 * 60,
     getNextPageParam: (lastPage) =>
@@ -92,6 +178,12 @@ export default function Resgates() {
         ? lastPage.Data[lastPage.Data.length - 1].rescueId
         : null,
   });
+
+  const refreshData = useCallback(() => {
+    queryPending.refetch();
+    queryMy.refetch();
+    queryStarted.refetch();
+  }, [queryPending, queryMy, queryStarted]);
 
   return (
     <Layout>
@@ -113,91 +205,15 @@ export default function Resgates() {
         </div>
       </h5>
 
-      <Tabs defaultActiveKey="pending" className="w-100" fill>
+      <Tabs defaultActiveKey="pending" justify fill>
         <Tab eventKey="pending" title="Pendentes">
-          {queryPending.isFetched &&
-            (!queryPending.data?.pages[0].Data ||
-              queryPending.data?.pages[0].Data?.length === 0) && (
-              <Alert variant="light" className="mt-4 text-center">
-                Nenhum registro encontrado
-              </Alert>
-            )}
-          <ListGroup className="w-100">
-            {queryPending.data?.pages.map((page, key) => {
-              return (
-                <React.Fragment key={key}>
-                  {page.Data?.map((item, itemKey) => {
-                    return (
-                      <RestageItem
-                        key={itemKey}
-                        rescueId={item.rescueId}
-                        requestDateTime={item.requestDateTime}
-                        animalsNumber={item.animalsNumber}
-                        childrenNumber={item.childrenNumber}
-                        elderlyNumber={item.elderlyNumber}
-                        adultsNumber={item.adultsNumber}
-                        disabledNumber={item.disabledNumber}
-                        cellphone={item.cellphone}
-                        latitude={item.latitude}
-                        longitude={item.longitude}
-                        distance={item.distance}
-                        confirm={true}
-                      />
-                    );
-                  })}
-                </React.Fragment>
-              );
-            })}
-          </ListGroup>
-
-          <InfiniteScroll
-            more={queryPending.hasNextPage}
-            load={fetchDataPendingNextPage}
-            loading={queryPending.isFetching || queryPending.isFetchingNextPage}
-          />
+          <QueryResults query={queryPending} refreshData={refreshData} />
         </Tab>
-        <Tab eventKey="completed" title="Concluídos">
-          {queryCompleted.isFetched &&
-            (!queryCompleted.data?.pages[0].Data ||
-              queryCompleted.data?.pages[0].Data?.length === 0) && (
-              <Alert variant="light" className="mt-4 text-center">
-                Nenhum registro encontrado
-              </Alert>
-            )}
-          <ListGroup className="w-100">
-            {queryCompleted.data?.pages.map((page, key) => {
-              return (
-                <React.Fragment key={key}>
-                  {page.Data?.map((item, itemKey) => {
-                    return (
-                      <RestageItem
-                        key={itemKey}
-                        rescueId={item.rescueId}
-                        requestDateTime={item.requestDateTime}
-                        animalsNumber={item.animalsNumber}
-                        childrenNumber={item.childrenNumber}
-                        elderlyNumber={item.elderlyNumber}
-                        adultsNumber={item.adultsNumber}
-                        disabledNumber={item.disabledNumber}
-                        cellphone={item.cellphone}
-                        latitude={item.latitude}
-                        longitude={item.longitude}
-                        distance={item.distance}
-                      />
-                    );
-                  })}
-                </React.Fragment>
-              );
-            })}
-          </ListGroup>
-
-          <InfiniteScroll
-            more={queryCompleted.hasNextPage}
-            load={fetchDataCompletedNextPage}
-            loading={
-              queryCompleted.isFetching || queryCompleted.isFetchingNextPage
-            }
-          />
+        <Tab eventKey="started" title="Iniciados">
+          <QueryResults query={queryStarted} refreshData={refreshData} />
+        </Tab>
+        <Tab eventKey="my" title="Meus">
+          <QueryResults query={queryMy} refreshData={refreshData} />
         </Tab>
       </Tabs>
     </Layout>
