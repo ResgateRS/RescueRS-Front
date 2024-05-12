@@ -54,19 +54,22 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     async function handleLocation() {
       console.log("updating location");
       const position = await getLocation();
+      console.log({ position });
       setPosition(position);
     }
 
-    const intervalLocation = setTimeout(
+    handleLocation();
+
+    const intervalLocation = setInterval(
       () => {
         handleLocation();
       },
-      rescuer ? 1000 * 60 : 5000,
+      rescuer ? 1000 * 30 : 1000 * 5,
     );
     return () => {
-      clearTimeout(intervalLocation);
+      clearInterval(intervalLocation);
     };
-  }, [rescuer, position]);
+  }, [rescuer]);
 
   useEffect(() => {
     const auth = getAuthFromStorage();

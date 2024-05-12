@@ -13,6 +13,12 @@ export type LoginResponseType = {
 
 export type APIResponseLogin = APIResponse<LoginResponseType>;
 
+export enum RescueStatus {
+  Pending = 0,
+  Started = 1,
+  Completed = 2,
+}
+
 export type ListMyRescuesType = {
   rescueId: string;
   requestDateTime: string;
@@ -21,7 +27,7 @@ export type ListMyRescuesType = {
   elderlyNumber: number;
   disabledNumber: number;
   animalsNumber: number;
-  rescued: boolean;
+  status: RescueStatus;
 };
 
 export type APIResponseListMyRescues = APIResponse<ListMyRescuesType[]>;
@@ -29,6 +35,8 @@ export type APIResponseListMyRescues = APIResponse<ListMyRescuesType[]>;
 export type ListPendingRescuesType = {
   rescueId: string;
   requestDateTime: string;
+  updateDateTime?: string;
+  description?: string;
   adultsNumber: number;
   childrenNumber: number;
   elderlyNumber: number;
@@ -37,8 +45,9 @@ export type ListPendingRescuesType = {
   latitude: number;
   longitude: number;
   cellphone: string;
-  rescued: boolean;
+  status: RescueStatus;
   distance: number;
+  startedByMe?: boolean;
 };
 
 export type APIResponseListPendingRescues = APIResponse<
@@ -47,6 +56,7 @@ export type APIResponseListPendingRescues = APIResponse<
 
 export type APIRequestRequest = {
   contactPhone: string;
+  description: string | null;
   adultsNumber: number;
   childrenNumber: number;
   elderlyNumber: number;

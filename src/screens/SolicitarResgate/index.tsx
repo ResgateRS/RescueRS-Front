@@ -59,6 +59,7 @@ export default function SolicitarResgate() {
       animalsNumber: animalsNumber,
       latitude: position?.lat ?? 0,
       longitude: position?.lng ?? 0,
+      description: null,
     };
 
     const resp = await post<APIRequestRequest, APIResponse>(

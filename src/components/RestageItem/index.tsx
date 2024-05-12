@@ -1,6 +1,8 @@
 import ListGroup from "react-bootstrap/ListGroup";
 import Icon from "@mdi/react";
+import clsx from "clsx";
 import {
+  mdiCancel,
   mdiCellphone,
   mdiCheck,
   mdiClockOutline,
@@ -8,7 +10,7 @@ import {
   mdiMapMarkerOutline,
   mdiWhatsapp,
 } from "@mdi/js";
-import { Badge, Button, Col, Modal, Row, Spinner } from "react-bootstrap";
+import { Badge, Button, Col, Row, Spinner } from "react-bootstrap";
 import moment from "moment";
 import "moment/dist/locale/pt-br";
 import { QueryClient } from "@tanstack/react-query";
@@ -20,6 +22,14 @@ import {
   formatarDistancia,
 } from "../../config/define";
 import { useState } from "react";
+import { useConfirmModal } from "../../context/ConfirmModal";
+import haversine from "haversine";
+
+enum RescueStatus {
+  Pending = 0,
+  Started = 1,
+  Completed = 2,
+}
 
 type RestageItemProps = {
   rescueId: string;
@@ -33,29 +43,36 @@ type RestageItemProps = {
   latitude?: number;
   longitude?: number;
   distance?: number;
-  confirm?: boolean;
-  rescued?: boolean;
+  status?: RescueStatus;
+  isRescuer?: boolean;
+  startedByMe?: boolean;
+  refreshData?: () => void;
 };
 
 const queryClient = new QueryClient();
 
+enum RescueAction {
+  Confirm = "Confirm",
+  Cancel = "Cancel",
+  Start = "Start",
+}
+
 export default function RestageItem(props: RestageItemProps) {
-  const { token } = useAuth();
+  const { token, position } = useAuth();
   const { post } = useApi();
+  const { openModal } = useConfirmModal();
 
   const [loading, setLoading] = useState(false);
-  const [modal, setModal] = useState(false);
   const [removed, setRemoved] = useState(false);
 
-  async function handleConfirm() {
+  async function handleAction(action: RescueAction) {
     setLoading(true);
-    setModal(false);
     const data: APIConfirmRequest = {
       rescueId: props.rescueId,
     };
 
     const resp = await post<APIConfirmRequest, APIResponse>(
-      `${import.meta.env.VITE_API_URL}/Rescue/Confirm`,
+      `${import.meta.env.VITE_API_URL}/Rescue/${action}`,
       data,
       {
         headers: {
@@ -85,7 +102,15 @@ export default function RestageItem(props: RestageItemProps) {
   if (removed) return null;
 
   return (
-    <ListGroup.Item>
+    <ListGroup.Item
+      variant={
+        clsx({
+          primary: props.status === RescueStatus.Started && props.startedByMe,
+          success: props.status === RescueStatus.Completed,
+        }) || "light"
+      }
+      className="rounded border "
+    >
       <div className="d-flex flex-column gap-2">
         <Row>
           <Col>
@@ -94,14 +119,50 @@ export default function RestageItem(props: RestageItemProps) {
               {moment(props.requestDateTime).locale("pt-br").fromNow()}
             </div>
           </Col>
-          {props.distance && (
-            <Col>
-              <div className="d-flex align-items-center text-muted justify-content-end">
-                <Icon path={mdiMapMarkerOutline} size={0.7} className="me-1" />
-                {formatarDistancia(props.distance)}
-              </div>
-            </Col>
-          )}
+
+          <Col>
+            <div className="d-flex flex-column flex-sm-row gap-2 align-items-end text-muted justify-content-end">
+              {props.status === RescueStatus.Pending && (
+                <Badge pill bg="warning" className="fs-6">
+                  pendente
+                </Badge>
+              )}
+              {props.status === RescueStatus.Started && (
+                <Badge
+                  pill
+                  bg={props.startedByMe ? "primary" : "secondary"}
+                  className="fs-6"
+                >
+                  {props.startedByMe ? "você iniciou" : "em andamento"}
+                </Badge>
+              )}
+              {props.status === RescueStatus.Completed && (
+                <Badge pill bg="success" className="fs-6">
+                  finalizado
+                </Badge>
+              )}
+              {props.distance && (
+                <div>
+                  <Icon
+                    path={mdiMapMarkerOutline}
+                    size={0.7}
+                    className="me-1"
+                  />
+                  {position &&
+                    formatarDistancia(
+                      haversine(
+                        { latitude: position.lat, longitude: position.lng },
+                        {
+                          latitude: props.latitude!,
+                          longitude: props.longitude!,
+                        },
+                        { unit: "meter" },
+                      ),
+                    )}
+                </div>
+              )}
+            </div>
+          </Col>
         </Row>
         <Row>
           {props.adultsNumber > 0 && (
@@ -137,11 +198,11 @@ export default function RestageItem(props: RestageItemProps) {
         </Row>
 
         <Row>
-          {props.latitude && props.longitude && (
-            <Col className="d-flex pb-2 pb-lg-0" xs={12} lg={6}>
+          {props.latitude && props.longitude ? (
+            <Col className="d-flex pb-2 pb-lg-0" xs={12} sm={12} lg={6}>
               <Button
                 as="a"
-                variant="primary"
+                variant="outline-primary"
                 target="_blank"
                 size="lg"
                 className="d-flex align-items-center justify-content-center flex-fill fw-medium"
@@ -151,13 +212,13 @@ export default function RestageItem(props: RestageItemProps) {
                 <Icon path={mdiMapMarker} size={1} className="me-2" /> Mapa
               </Button>
             </Col>
-          )}
+          ) : null}
           {props.cellphone && (
             <>
-              <Col className="d-flex" xs={6} lg={3}>
+              <Col className="d-flex pb-2 pb-sm-0" xs={12} sm={6} lg={3}>
                 <Button
                   as="a"
-                  variant="info"
+                  variant="outline-dark"
                   target="_blank"
                   size="lg"
                   className="d-flex align-items-center justify-content-center flex-fill fw-medium"
@@ -167,10 +228,10 @@ export default function RestageItem(props: RestageItemProps) {
                   <Icon path={mdiCellphone} size={1} className="me-2" /> Celular
                 </Button>
               </Col>
-              <Col className="d-flex" xs={6} lg={3}>
+              <Col className="d-flex" xs={12} sm={6} lg={3}>
                 <Button
                   as="a"
-                  variant="success"
+                  variant="outline-success"
                   target="_blank"
                   size="lg"
                   className="d-flex align-items-center justify-content-center flex-fill fw-medium"
@@ -183,80 +244,117 @@ export default function RestageItem(props: RestageItemProps) {
             </>
           )}
         </Row>
-        <Row>
-          {props.confirm && (
-            <Col className="d-flex gap-2">
-              <Button
-                as="button"
-                variant="dark"
-                size="lg"
-                className="d-flex align-items-center justify-content-center flex-fill fw-medium"
-                onClick={() => {
-                  setModal(true);
-                }}
-                disabled={loading}
-              >
-                {loading ? (
-                  <Spinner size="sm" className="me-2" />
-                ) : (
-                  <Icon path={mdiCheck} size={1} className="me-2" />
-                )}
-                Concluir Resgate
-              </Button>
-            </Col>
-          )}
-          {props.rescued === false && (
-            <Badge bg={"warning"} className="fs-6">
-              Pendente
-            </Badge>
-          )}
-          {props.rescued === true && (
-            <Badge bg={"success"} className="fs-6">
-              Realizado
-            </Badge>
-          )}
-        </Row>
-      </div>
+        {props.isRescuer && (
+          <Row>
+            {props.status === RescueStatus.Pending && (
+              <Col className="d-flex">
+                <Button
+                  as="button"
+                  variant="dark"
+                  size="lg"
+                  className="d-flex align-items-center justify-content-center flex-fill fw-medium"
+                  onClick={async () => {
+                    const confirm = await openModal({
+                      title: "Iniciar o resgate",
+                      message: (
+                        <>
+                          Você está confirmando que irá realizar o resgate.
+                          <br />
+                          Confirma essa ação?
+                        </>
+                      ),
+                      confirmButtonText: "Iniciar",
+                    });
+                    if (confirm) {
+                      handleAction(RescueAction.Start).then(props.refreshData);
+                    }
+                  }}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Spinner size="sm" className="me-2" />
+                  ) : (
+                    <Icon path={mdiCheck} size={1} className="me-2" />
+                  )}
+                  Iniciar resgate
+                </Button>
+              </Col>
+            )}
 
-      <Modal
-        centered={true}
-        show={modal}
-        onHide={() => {
-          setModal(false);
-        }}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmar o Resgate</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="fs-4 text-center">
-            Você está confirmando que o resgate foi realizado e não precisa mais
-            de ajuda.
-            <br />
-            Confirma essa ação?
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant={"primary"}
-            className="w00"
-            onClick={() => {
-              handleConfirm();
-            }}
-          >
-            Confirmar
-          </Button>
-          <Button
-            variant={"dark"}
-            className="w00"
-            onClick={() => {
-              setModal(false);
-            }}
-          >
-            Fechar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+            {props.status === RescueStatus.Started && (
+              <>
+                <Col className="d-flex pb-2 pb-sm-0" xs={12} sm={6}>
+                  <Button
+                    as="button"
+                    variant="outline-danger"
+                    size="lg"
+                    className="d-flex align-items-center justify-content-center flex-fill fw-medium"
+                    onClick={async () => {
+                      const confirm = await openModal({
+                        title: "Cancelar regate",
+                        message: (
+                          <>
+                            O resgate voltará à lista de pendentes.
+                            <br />
+                            Confirma essa ação?
+                          </>
+                        ),
+                        confirmButtonText: "Cancelar resgate",
+                        cancelButtonText: "Manter",
+                        isDanger: true,
+                      });
+                      if (confirm) {
+                        handleAction(RescueAction.Cancel);
+                      }
+                    }}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <Spinner size="sm" className="me-2" />
+                    ) : (
+                      <Icon path={mdiCancel} size={1} className="me-2" />
+                    )}
+                    Cancelar
+                  </Button>
+                </Col>
+                <Col className="d-flex" xs={12} sm={6}>
+                  <Button
+                    as="button"
+                    variant="success"
+                    size="lg"
+                    className="d-flex align-items-center justify-content-center flex-fill fw-medium"
+                    onClick={async () => {
+                      const confirm = await openModal({
+                        title: "Confirmar resgate",
+                        message: (
+                          <>
+                            O resgate será marcado como finalizado.
+                            <br />
+                            Confirma essa ação?
+                          </>
+                        ),
+                      });
+                      if (confirm) {
+                        handleAction(RescueAction.Confirm).then(
+                          props.refreshData,
+                        );
+                      }
+                    }}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <Spinner size="sm" className="me-2" />
+                    ) : (
+                      <Icon path={mdiCheck} size={1} className="me-2" />
+                    )}
+                    Concluir
+                  </Button>
+                </Col>
+              </>
+            )}
+          </Row>
+        )}
+      </div>
     </ListGroup.Item>
   );
 }
