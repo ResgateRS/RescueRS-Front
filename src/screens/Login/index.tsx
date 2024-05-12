@@ -119,7 +119,7 @@ export default function Login() {
           {loading && <Spinner size="sm" className="me-2" />} Estou Resgatando
         </Button>
         Acesso aos resgates solicitados pendentes e concluídos com acesso ao
-        mapa, celular e processo de concluir restages.
+        mapa, celular e processo de concluir resgates.
       </Form>
     </Layout>
   );

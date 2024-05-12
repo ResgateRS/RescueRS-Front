@@ -73,7 +73,7 @@ export default function MinhasSolicitacoes() {
         <Alert variant="light">Nenhum registro encontrado</Alert>
       )}
 
-      <ListGroup className="w-100">
+      <ListGroup className="w-100 gap-4">
         {data?.pages.map((page, key) => {
           return (
             <React.Fragment key={key}>
@@ -88,7 +88,7 @@ export default function MinhasSolicitacoes() {
                     elderlyNumber={item.elderlyNumber}
                     adultsNumber={item.adultsNumber}
                     disabledNumber={item.disabledNumber}
-                    rescued={item.rescued}
+                    status={item.status}
                   />
                 );
               })}

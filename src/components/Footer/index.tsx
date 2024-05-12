@@ -1,20 +1,35 @@
-import { mdiEmail, mdiGithub } from "@mdi/js";
+import { mdiEmail, mdiGithub, mdiInstagram, mdiOpenInNew } from "@mdi/js";
 import Icon from "@mdi/react";
 
 export const Footer = () => {
   return (
-    <footer className="text-secondary row text-center gap-1 pt-2 pb-1">
-      <div className="col text-start">
-        <a className="icon-link" href="mailto:contato@resgaters.app.br">
-          <Icon path={mdiEmail} size={1} />
-          contato@resgaters.app.br
-        </a>
-      </div>
-      <div className="col text-end">
-        <a className="icon-link" href="https://github.com/ResgateRS">
-          GitHub <Icon path={mdiGithub} size={1} />
-        </a>
-      </div>
+    <footer className="d-flex flex-column gap-2 p-2">
+      <a
+        className="d-flex align-items-center icon-link text-decoration-none text-dark"
+        href="mailto:contato@resgaters.app.br"
+      >
+        <Icon path={mdiEmail} size={1} />
+        contato@resgaters.app.br
+        <Icon path={mdiOpenInNew} size={0.8} />
+      </a>
+
+      <a
+        className="d-flex align-items-center icon-link text-decoration-none text-dark"
+        href="https://www.instagram.com/resgaters.app.br/"
+        target="_blank"
+      >
+        <Icon path={mdiInstagram} size={1} /> instagram.com/resgaters.app.br
+        <Icon path={mdiOpenInNew} size={0.8} />
+      </a>
+
+      <a
+        className="d-flex align-items-center icon-link text-decoration-none text-dark"
+        href="https://github.com/ResgateRS"
+        target="_blank"
+      >
+        <Icon path={mdiGithub} size={1} /> github.com/ResgateRS
+        <Icon path={mdiOpenInNew} size={0.8} />
+      </a>
     </footer>
   );
 };

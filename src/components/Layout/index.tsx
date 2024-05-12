@@ -68,7 +68,7 @@ export default function Layout({ children }: any) {
         </div>
       )}
       <Header />
-      <div className="bg-white flex-fill shadow-sm rounded-4 p-4">
+      <div className="bg-white flex-fill shadow-sm rounded-4 p-3">
         {children}
       </div>
       <Footer />

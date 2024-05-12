@@ -6,9 +6,10 @@ const SolicitarResgate = lazy(() => import("./screens/SolicitarResgate"));
 const MinhasSolicitacoes = lazy(() => import("./screens/MinhasSolicitacoes"));
 const Resgates = lazy(() => import("./screens/Resgates"));
 
-import AuthProvider from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Spinner } from "react-bootstrap";
+import { ConfirmModalProvider } from "./context/ConfirmModal";
 
 function App() {
   const element = useRoutes([
@@ -34,7 +35,9 @@ function App() {
       }
     >
       <AuthProvider>
-        {React.cloneElement(element, { key: location.pathname })}
+        <ConfirmModalProvider>
+          {React.cloneElement(element, { key: location.pathname })}
+        </ConfirmModalProvider>
       </AuthProvider>
     </Suspense>
   );
