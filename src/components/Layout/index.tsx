@@ -51,10 +51,13 @@ export default function Layout({ children }: any) {
   }
 
   return (
-    <Container className="d-flex flex-column" style={{ minHeight: "100dvh" }}>
+    <Container
+      className="d-flex flex-column p-0"
+      style={{ minHeight: "100dvh" }}
+    >
       {(install || installIOS) && (
         <div
-          className={`d-flex align-items-center justify-content-center px-3 pt-2 gap-3`}
+          className={`d-flex align-items-center justify-content-center px-3 py-1 gap-3 border border-top-0 bg-white`}
         >
           Baixe o aplicativo
           <Button

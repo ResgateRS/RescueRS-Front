@@ -14,8 +14,13 @@ export default function Header() {
   }
 
   return (
-    <div className="d-flex flex-row align-items-center justify-content-between px-2 my-4">
-      <div className="d-flex flex-row align-items-center justify-content-start">
+    <div className="d-flex flex-row align-items-center justify-content-between px-2 my-2">
+      <div
+        className="d-flex flex-row align-items-center justify-content-start text-white p-2 rounded-3"
+        style={{
+          background: "linear-gradient(90deg, #ED8445, #FE3431)",
+        }}
+      >
         <Icon path={mdiHandHeartOutline} size={1.5} className="me-2" />
         <h2 className="my-0">Resgate RS</h2>
       </div>
