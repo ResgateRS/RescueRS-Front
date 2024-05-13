@@ -48,9 +48,9 @@ export const useApi = () => {
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        ...options.headers,
         ...authHeaders,
         "Content-Type": "application/json",
+        ...options.headers,
       },
       body: JSON.stringify(body),
     });
