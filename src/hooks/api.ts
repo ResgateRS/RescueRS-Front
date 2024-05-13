@@ -27,15 +27,18 @@ export const useApi = () => {
 
     const response = await fetch(`${url}?${search || ""}`, {
       headers: {
-        ...options.headers,
         ...authHeaders,
+        ...options.headers,
       },
     });
     const responseJson = await response.json();
     if (responseJson.Result === 99) {
       let reLogin = await handleReLogin();
-      if (reLogin) {
-        return await get(url, options);
+      if (reLogin.Result === 1) {
+        return await get(url, {
+          ...options,
+          headers: { Authorization: `Bearer ${reLogin.Data?.token}` },
+        });
       }
     }
     return responseJson;
@@ -55,7 +58,10 @@ export const useApi = () => {
     if (responseJson.Result === 99) {
       let reLogin = await handleReLogin();
       if (reLogin) {
-        return await post(url, body, options);
+        return await post(url, body, {
+          ...options,
+          headers: { Authorization: `Bearer ${reLogin.Data?.token}` },
+        });
       }
     }
     return responseJson;
@@ -70,11 +76,11 @@ export const useApi = () => {
     const body = (await resp.json()) as APIResponseLogin;
     if (body.Result === 1) {
       setAuth(body.Data?.token, body.Data?.rescuer, cellphone);
-      return true;
     } else {
+      setAuth(undefined, undefined, undefined);
       navigate("/");
-      return false;
     }
+    return body;
   }
 
   return { get, post };
