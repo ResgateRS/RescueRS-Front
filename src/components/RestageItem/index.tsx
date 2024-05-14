@@ -6,8 +6,9 @@ import {
   mdiCellphone,
   mdiCheck,
   mdiClockOutline,
+  mdiHandHeartOutline,
   mdiMapMarker,
-  mdiMapMarkerOutline,
+  mdiMapMarkerDistance,
   mdiWhatsapp,
 } from "@mdi/js";
 import { Badge, Button, Col, Row, Spinner } from "react-bootstrap";
@@ -43,9 +44,11 @@ type RestageItemProps = {
   latitude?: number;
   longitude?: number;
   distance?: number;
+  description?: string;
   status?: RescueStatus;
   isRescuer?: boolean;
   startedByMe?: boolean;
+  updateDateTime?: string;
   refreshData?: () => void;
 };
 
@@ -133,65 +136,89 @@ export default function RestageItem(props: RestageItemProps) {
               </Badge>
             )}
           </div>
-          <div className="d-flex flex-column align-items-end text-muted small">
-            <div className="d-flex align-items-center justify-content-start">
-              <Icon path={mdiClockOutline} size={0.6} className="me-1" />
-              Solicitado{" "}
-              {moment(props.requestDateTime).locale("pt-br").fromNow()}
-            </div>
+          <div className="d-flex flex-column align-items-end">
             {props.isRescuer &&
               props.status !== RescueStatus.Completed &&
               position && (
                 <div className="d-flex align-items-center justify-content-start">
                   <Icon
-                    path={mdiMapMarkerOutline}
-                    size={0.6}
+                    path={mdiMapMarkerDistance}
+                    size={0.8}
                     className="me-1"
                   />
-                  Distancia{` `}
-                  {formatarDistancia(
-                    haversine(
-                      { latitude: position.lat, longitude: position.lng },
-                      {
-                        latitude: props.latitude!,
-                        longitude: props.longitude!,
-                      },
-                      { unit: "meter" },
-                    ),
-                  )}
+                  Distância
+                  <span className="fw-medium ms-1">
+                    {formatarDistancia(
+                      haversine(
+                        { latitude: position.lat, longitude: position.lng },
+                        {
+                          latitude: props.latitude!,
+                          longitude: props.longitude!,
+                        },
+                        { unit: "meter" },
+                      ),
+                    )}
+                  </span>
                 </div>
               )}
           </div>
         </div>
-        <Row>
+        <div className="d-flex flex-wrap gap-3">
           {props.adultsNumber > 0 && (
-            <Col className="d-flex flex-column justify-content-center align-items-center">
+            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
               <div className="fw-bold fs-1">{props.adultsNumber}</div>
-              <div className="fw-medium">Adultos</div>
-            </Col>
+              <div className="fw-medium fs-6">Adultos</div>
+            </div>
           )}
           {props.childrenNumber > 0 && (
-            <Col className="d-flex flex-column justify-content-center align-items-center">
+            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
               <div className="fw-bold fs-1">{props.childrenNumber}</div>
-              <div className="fw-medium">Crianças</div>
-            </Col>
+              <div className="fw-medium fs-6">Crianças</div>
+            </div>
           )}
           {props.elderlyNumber > 0 && (
-            <Col className="d-flex flex-column justify-content-center align-items-center">
+            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
               <div className="fw-bold fs-1">{props.elderlyNumber}</div>
-              <div className="fw-medium">Idosos</div>
-            </Col>
+              <div className="fw-medium fs-6">Idosos</div>
+            </div>
           )}
           {props.animalsNumber > 0 && (
-            <Col className="d-flex flex-column justify-content-center align-items-center">
+            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
               <div className="fw-bold fs-1">{props.animalsNumber}</div>
-              <div className="fw-medium">Animais</div>
-            </Col>
+              <div className="fw-medium fs-6">Animais</div>
+            </div>
           )}
           {props.disabledNumber > 0 && (
-            <Col className="d-flex flex-column justify-content-center align-items-center">
+            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
               <div className="fw-bold fs-1">{props.disabledNumber}</div>
-              <div className="fw-medium">PCD</div>
+              <div className="fw-medium fs-6">PCD</div>
+            </div>
+          )}
+        </div>
+
+        {props.description && (
+          <div>
+            <label className="fw-medium small">Descrição / Observação:</label>
+            <div>{props.description}</div>
+          </div>
+        )}
+        <Row>
+          {props.updateDateTime && (
+            <Col>
+              <label className="fw-medium small">Ultimá atualização:</label>
+              <div className="d-flex align-items-center">
+                <Icon path={mdiClockOutline} size={0.8} className="me-1" />{" "}
+                {moment(props.updateDateTime).locale("pt-br").fromNow()}
+              </div>
+            </Col>
+          )}
+          {props.requestDateTime && (
+            <Col>
+              <label className="fw-medium small">Solicitado:</label>
+              <div className="d-flex align-items-center">
+                <Icon path={mdiClockOutline} size={0.8} className="me-1" />{" "}
+                {moment(props.requestDateTime).locale("pt-br").fromNow()}
+              </div>
             </Col>
           )}
         </Row>
@@ -200,7 +227,7 @@ export default function RestageItem(props: RestageItemProps) {
           {props.latitude && props.longitude ? (
             <Button
               as="a"
-              variant="outline-dark"
+              variant="light"
               target="_blank"
               className="d-flex align-items-center justify-content-center flex-fill"
               href={`https://www.google.com/maps/place/${props.latitude},${props.longitude}`}
@@ -218,7 +245,7 @@ export default function RestageItem(props: RestageItemProps) {
             <>
               <Button
                 as="a"
-                variant="outline-dark"
+                variant="light"
                 target="_blank"
                 className="d-flex align-items-center justify-content-center flex-fill"
                 href={`tel:${props.cellphone}`}
@@ -228,7 +255,7 @@ export default function RestageItem(props: RestageItemProps) {
               </Button>
               <Button
                 as="a"
-                variant="outline-dark"
+                variant="light"
                 target="_blank"
                 className="d-flex align-items-center justify-content-center flex-fill"
                 href={`https://wa.me/55${props.cellphone}`}
@@ -245,11 +272,8 @@ export default function RestageItem(props: RestageItemProps) {
           )}
         </div>
 
-        {props.isRescuer && (
+        {props.isRescuer ? (
           <>
-            {props.status !== RescueStatus.Completed && (
-              <hr className="my-1 border-secondary" />
-            )}
             <Row>
               {props.status === RescueStatus.Pending && (
                 <Col className="d-flex">
@@ -281,7 +305,11 @@ export default function RestageItem(props: RestageItemProps) {
                     {loading ? (
                       <Spinner size="sm" className="me-2" />
                     ) : (
-                      <Icon path={mdiCheck} size={1} className="me-2" />
+                      <Icon
+                        path={mdiHandHeartOutline}
+                        size={1}
+                        className="me-2"
+                      />
                     )}
                     Iniciar resgate
                   </Button>
@@ -355,6 +383,44 @@ export default function RestageItem(props: RestageItemProps) {
                 </div>
               )}
             </Row>
+          </>
+        ) : (
+          <>
+            {props.status === RescueStatus.Pending && (
+              <div className="d-flex flex-column gap-2">
+                <Button
+                  as="button"
+                  variant="light"
+                  size="lg"
+                  className="d-flex align-items-center justify-content-center flex-fill fw-medium"
+                  onClick={async () => {
+                    const confirm = await openModal({
+                      title: "Confirmar resgate",
+                      message: (
+                        <>
+                          O resgate será marcado como finalizado.
+                          <br />
+                          Confirma essa ação?
+                        </>
+                      ),
+                    });
+                    if (confirm) {
+                      handleAction(RescueAction.Confirm).then(
+                        props.refreshData,
+                      );
+                    }
+                  }}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Spinner size="sm" className="me-2" />
+                  ) : (
+                    <Icon path={mdiCheck} size={1} className="me-2" />
+                  )}
+                  Concluir
+                </Button>
+              </div>
+            )}
           </>
         )}
       </div>

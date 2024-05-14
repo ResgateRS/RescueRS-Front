@@ -35,6 +35,7 @@ export default function SolicitarResgate() {
   const [elderlyNumber, setElderlyNumber] = useState<number>(0);
   const [disabledNumber, setDisabledNumber] = useState<number>(0);
   const [animalsNumber, setAnimalsNumber] = useState<number>(0);
+  const [description, setDescription] = useState("");
   const [position, setPosition] = useState<Position | null>(null);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
@@ -47,6 +48,8 @@ export default function SolicitarResgate() {
       setError("Informe a localização");
       return;
     }
+
+    setError("");
     setLoading(true);
 
     const parsedPhoneNumber = parsePhoneNumber(contactPhone!, "BR");
@@ -61,7 +64,7 @@ export default function SolicitarResgate() {
       animalsNumber: animalsNumber,
       latitude: position?.lat ?? 0,
       longitude: position?.lng ?? 0,
-      description: null,
+      description: description,
     };
 
     const resp = await post<APIRequestRequest, APIResponse>(
@@ -278,6 +281,22 @@ export default function SolicitarResgate() {
           </InputGroup>
         </Form.Group>
 
+        <Form.Group className="mb-3 ">
+          <Form.Label>Descrição / Observação</Form.Label>
+          <Form.Control
+            as={"textarea"}
+            type="text"
+            placeholder="Informe aqui uma breve descrição / observação sobre o resgate"
+            size="lg"
+            rows={3}
+            maxLength={500}
+            value={description}
+            onChange={(e) => {
+              setDescription(e.currentTarget.value);
+            }}
+          />
+        </Form.Group>
+
         <LocationInput
           currentUserPosition={userPosition}
           onChange={setPosition}
@@ -286,7 +305,7 @@ export default function SolicitarResgate() {
         {error != "" && <Alert variant="danger">{error}</Alert>}
 
         <Button
-          className="mb-4 w-100 text-uppercase py-3 fw-medium"
+          className="w-100 text-uppercase py-3 fw-medium"
           size="lg"
           onClick={handleSolicitarResgate}
           disabled={loading}

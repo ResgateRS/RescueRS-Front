@@ -4,7 +4,7 @@ import {
   UseInfiniteQueryResult,
   useInfiniteQuery,
 } from "@tanstack/react-query";
-import { Alert, Form, ListGroup, Tab, Tabs } from "react-bootstrap";
+import { Alert, Form, ListGroup, Spinner, Tab, Tabs } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import React, { useCallback, useState } from "react";
 import RestageItem from "../../components/RestageItem";
@@ -51,6 +51,8 @@ const QueryResults: React.FC<QueryTabProps> = ({
                     latitude={item.latitude}
                     longitude={item.longitude}
                     distance={item.distance}
+                    description={item.description}
+                    updateDateTime={item.updateDateTime}
                     status={item.status}
                     startedByMe={item.startedByMe}
                     isRescuer
@@ -63,13 +65,15 @@ const QueryResults: React.FC<QueryTabProps> = ({
         })}
       </ListGroup>
 
-      <InfiniteScroll
-        more={query.hasNextPage}
-        load={async () => {
-          await query.fetchNextPage();
-        }}
-        loading={query.isFetching || query.isFetchingNextPage}
-      />
+      <div className="d-flex justify-content-center">
+        <InfiniteScroll
+          more={query.hasNextPage}
+          load={async () => {
+            await query.fetchNextPage();
+          }}
+          loading={query.isFetching || query.isFetchingNextPage}
+        />
+      </div>
     </>
   );
 };
@@ -188,7 +192,12 @@ export default function Resgates() {
   return (
     <Layout>
       <h5 className="d-flex align-items-center justify-content-between mb-4">
-        Resgates
+        <div>
+          Resgates
+          {(queryPending.isFetching ||
+            queryStarted.isFetching ||
+            queryMy.isFetching) && <Spinner size="sm" className="ms-2" />}
+        </div>
         <div className="d-flex align-items-center">
           <span className="fs-6 fw-normal me-2">Ordem:</span>
           <Form.Select
