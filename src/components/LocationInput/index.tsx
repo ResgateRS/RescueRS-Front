@@ -146,7 +146,7 @@ export function LocationInput({
         apikey={import.meta.env.VITE_HERE_API_KEY}
         initialPosition={currentUserPosition}
         ref={mapRef}
-        className="my-3"
+        className="mb-3"
       />
     </ComboBox>
   );
