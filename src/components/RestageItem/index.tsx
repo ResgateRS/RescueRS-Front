@@ -163,33 +163,48 @@ export default function RestageItem(props: RestageItemProps) {
               )}
           </div>
         </div>
-        <div className="d-flex flex-wrap gap-3">
+        <div className="d-flex flex-wrap gap-3" style={{ zIndex: 1 }}>
           {props.adultsNumber > 0 && (
-            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
+            <div
+              className="badge text-black border-resgate p-2"
+              style={{ minWidth: 100 }}
+            >
               <div className="fw-bold fs-1">{props.adultsNumber}</div>
               <div className="fw-medium fs-6">Adultos</div>
             </div>
           )}
           {props.childrenNumber > 0 && (
-            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
+            <div
+              className="badge text-black border-resgate p-2"
+              style={{ minWidth: 100 }}
+            >
               <div className="fw-bold fs-1">{props.childrenNumber}</div>
               <div className="fw-medium fs-6">Crianças</div>
             </div>
           )}
           {props.elderlyNumber > 0 && (
-            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
+            <div
+              className="badge text-black border-resgate p-2"
+              style={{ minWidth: 100 }}
+            >
               <div className="fw-bold fs-1">{props.elderlyNumber}</div>
               <div className="fw-medium fs-6">Idosos</div>
             </div>
           )}
           {props.animalsNumber > 0 && (
-            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
+            <div
+              className="badge text-black border-resgate p-2"
+              style={{ minWidth: 100 }}
+            >
               <div className="fw-bold fs-1">{props.animalsNumber}</div>
               <div className="fw-medium fs-6">Animais</div>
             </div>
           )}
           {props.disabledNumber > 0 && (
-            <div className="badge bg-resgate p-2" style={{ minWidth: 100 }}>
+            <div
+              className="badge text-black border-resgate p-2"
+              style={{ minWidth: 100 }}
+            >
               <div className="fw-bold fs-1">{props.disabledNumber}</div>
               <div className="fw-medium fs-6">PCD</div>
             </div>
