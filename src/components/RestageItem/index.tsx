@@ -166,7 +166,7 @@ export default function RestageItem(props: RestageItemProps) {
         <div className="d-flex flex-wrap gap-3" style={{ zIndex: 1 }}>
           {props.adultsNumber > 0 && (
             <div
-              className="badge text-black border-resgate p-2"
+              className="badge text-black shadow-sm p-2"
               style={{ minWidth: 100 }}
             >
               <div className="fw-bold fs-1">{props.adultsNumber}</div>
@@ -175,7 +175,7 @@ export default function RestageItem(props: RestageItemProps) {
           )}
           {props.childrenNumber > 0 && (
             <div
-              className="badge text-black border-resgate p-2"
+              className="badge text-black shadow-sm p-2"
               style={{ minWidth: 100 }}
             >
               <div className="fw-bold fs-1">{props.childrenNumber}</div>
@@ -184,7 +184,7 @@ export default function RestageItem(props: RestageItemProps) {
           )}
           {props.elderlyNumber > 0 && (
             <div
-              className="badge text-black border-resgate p-2"
+              className="badge text-black shadow-sm p-2"
               style={{ minWidth: 100 }}
             >
               <div className="fw-bold fs-1">{props.elderlyNumber}</div>
@@ -193,7 +193,7 @@ export default function RestageItem(props: RestageItemProps) {
           )}
           {props.animalsNumber > 0 && (
             <div
-              className="badge text-black border-resgate p-2"
+              className="badge text-black shadow-sm p-2"
               style={{ minWidth: 100 }}
             >
               <div className="fw-bold fs-1">{props.animalsNumber}</div>
@@ -202,7 +202,7 @@ export default function RestageItem(props: RestageItemProps) {
           )}
           {props.disabledNumber > 0 && (
             <div
-              className="badge text-black border-resgate p-2"
+              className="badge text-black shadow-sm p-2"
               style={{ minWidth: 100 }}
             >
               <div className="fw-bold fs-1">{props.disabledNumber}</div>
