@@ -59,14 +59,14 @@ export default function Layout({ children }: any) {
         <div
           className={`d-flex align-items-center justify-content-center px-3 py-1 gap-3 border border-top-0 bg-white`}
         >
-          Baixe o aplicativo
+          Adicione à sua tela inicial
           <Button
-            className={` rounded-pill`}
+            className={`fw-medium rounded-pill`}
             variant={"dark"}
             onClick={handleInstall}
           >
-            <Icon path={mdiDownload} size={1} />
-            Instalar
+            <Icon path={mdiDownload} size={0.8} />
+            Adicionar
           </Button>
         </div>
       )}

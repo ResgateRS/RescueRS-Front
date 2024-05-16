@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Alert, Button, ListGroup } from "react-bootstrap";
+import { Alert, Button, ListGroup, Spinner } from "react-bootstrap";
 import Layout from "../../components/Layout";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -7,23 +7,31 @@ import { useAuth } from "../../context/AuthContext";
 import RestageItem from "../../components/RestageItem";
 import { APIResponseListMyRescues } from "../../config/define";
 import { useApi } from "../../hooks/api";
+import InfiniteScroll from "../../components/InfiniteScroll";
 
 export default function MinhasSolicitacoes() {
   const navigate = useNavigate();
   const { token } = useAuth();
   const { get } = useApi();
 
-  const { isFetched, isFetching, isFetchedAfterMount, data } =
-    useInfiniteQuery<APIResponseListMyRescues>({
-      queryKey: ["ListMyRescues"],
-      queryFn: ({ pageParam }) => fetchData(pageParam as string),
-      initialPageParam: undefined,
-      refetchInterval: 1000 * 60,
-      getNextPageParam: (lastPage) =>
-        lastPage.Data && lastPage.Data.length > 0
-          ? lastPage.Data[lastPage.Data.length - 1].rescueId
-          : null,
-    });
+  const {
+    isFetched,
+    isFetching,
+    isFetchedAfterMount,
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<APIResponseListMyRescues>({
+    queryKey: ["ListMyRescues"],
+    queryFn: ({ pageParam }) => fetchData(pageParam as string),
+    initialPageParam: undefined,
+    refetchInterval: 1000 * 60,
+    getNextPageParam: (lastPage) =>
+      lastPage.Data && lastPage.Data.length > 0
+        ? lastPage.Data[lastPage.Data.length - 1].rescueId
+        : null,
+  });
 
   useEffect(() => {
     if (
@@ -59,7 +67,10 @@ export default function MinhasSolicitacoes() {
 
   return (
     <Layout>
-      <h5 className="mb-4">Minhas Solicitações</h5>
+      <h5 className="mb-4">
+        Minhas Solicitações
+        {isFetching && <Spinner size="sm" className="ms-2" />}
+      </h5>
 
       <Button
         className="mb-4 w-100 text-uppercase py-3 fw-medium"
@@ -88,6 +99,8 @@ export default function MinhasSolicitacoes() {
                     elderlyNumber={item.elderlyNumber}
                     adultsNumber={item.adultsNumber}
                     disabledNumber={item.disabledNumber}
+                    description={item.description}
+                    updateDateTime={item.updateDateTime}
                     status={item.status}
                   />
                 );
@@ -96,6 +109,16 @@ export default function MinhasSolicitacoes() {
           );
         })}
       </ListGroup>
+
+      <div className="d-flex justify-content-center">
+        <InfiniteScroll
+          more={hasNextPage}
+          load={async () => {
+            await fetchNextPage();
+          }}
+          loading={isFetching || isFetchingNextPage}
+        />
+      </div>
     </Layout>
   );
 }

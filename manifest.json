@@ -7,7 +7,7 @@
   "start_url": "https://resgaters.app.br/",
   "prefer_related_applications": false,
   "background_color": "#fff",
-  "theme_color": "##F6583A",
+  "theme_color": "#F6583A",
   "icons": [
     {
       "src": "https://resgaters.app.br/logo.png",
