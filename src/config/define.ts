@@ -29,6 +29,8 @@ export type ListMyRescuesType = {
   elderlyNumber: number;
   disabledNumber: number;
   animalsNumber: number;
+  description: string;
+  updateDateTime: string;
   status: RescueStatus;
 };
 
